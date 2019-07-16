@@ -1,4 +1,4 @@
-package com.greenhouse.rpigreenhouse;
+package com.rpigreenhouse;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
