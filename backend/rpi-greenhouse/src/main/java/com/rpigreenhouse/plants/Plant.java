@@ -1,58 +1,60 @@
 package com.rpigreenhouse.plants;
 
+import lombok.Data;
+
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+@Data
 public class Plant {
-	private String plantId;
-	private String name;
-	private Integer waterLevel;
-	private Double maturity;
-	private Double growthSpeed;
-	private LocalDateTime plantedDateTime;
 
-	public Plant(String name, Integer waterLevel, Double growthSpeed, LocalDateTime plantedDateTime) {
-		this.plantId = UUID.randomUUID().toString(); // todo replace? maybe a bit of overkill
-		this.waterLevel = waterLevel;
-		this.name = name;
-		this.maturity = 0.0;
-		this.growthSpeed = growthSpeed;
-		this.plantedDateTime = plantedDateTime;
-	}
+    protected String plantId;
+    protected String plantType;
+    protected LocalDateTime plantedDateTime;
+    protected LocalDate expectedHarvestDate;
+    protected List<Boolean> idealGrowthMonths;
 
-	public void waterPlant() {
-		this.waterLevel = this.waterLevel + 10;
-	}
+    protected Integer seedWaterNeed;
+    protected Integer matureWaterNeed;
 
-	public String getName() {
-		return name;
-	}
+    protected byte[] imageOfPlant; // todo
+    protected Integer idealTemperature; // todo
+    protected Duration idealLightExposure; // todo
 
-	public LocalDateTime getPlantedLocalDateTime() {
-		return plantedDateTime;
-	}
 
-	public String getPlantId() {
-		return plantId;
-	}
+    public Plant() {
+        this.plantId = UUID.randomUUID().toString();
+        this.plantedDateTime = LocalDateTime.now();
+    }
 
-	public Integer getWaterLevel() {
-		return waterLevel;
-	}
+    public Integer calculateWaterNeed(LocalDate atDate) { // todo move to watermanager when created
+        if (atDate.isAfter(expectedHarvestDate)) {
+            return matureWaterNeed;
+        } else if (atDate.isBefore(plantedDateTime.toLocalDate())) {
+            return seedWaterNeed;
+        }
+        Float daysPassed = (float) ChronoUnit.DAYS.between(plantedDateTime.toLocalDate(), atDate);
+        Float matureDuration = (float) ChronoUnit.DAYS.between(plantedDateTime.toLocalDate(), expectedHarvestDate);
+        return Math.round(seedWaterNeed + (matureWaterNeed - seedWaterNeed) * (daysPassed / matureDuration));
+    }
 
-	public void updateState() {
-		if (waterLevel > 0) waterLevel--;
-		if (maturity < 100) maturity += growthSpeed;
-	}
+    public void setIdealGrowthMonths(Month from, Month to) {
+        this.idealGrowthMonths = Arrays.stream(Month.values()).map(month -> (month.getValue() > from.getValue() && month.getValue() < to.getValue())).
+                collect(Collectors.toList());
+    }
 
-	public String getStatus() {
-		String printableMaturity = "";
-		if (this.maturity != null) {
-			printableMaturity = maturity.toString();
-			if (printableMaturity.length() > 4) {
-				printableMaturity = printableMaturity.substring(0, 4);
-			}
-		}
-		return String.format("%s %s: waterlevel: %s, maturity: %s \t\t", name, plantId.substring(0, 4), waterLevel.toString(), printableMaturity);
-	}
+    public String getPlantId() {
+        return plantId;
+    }
+
+    public String getStatus() {
+        return String.format("%s %s: planted: %s\t\t", plantType, plantId.substring(0, 4), plantedDateTime.toString());
+    }
 }

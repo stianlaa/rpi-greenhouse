@@ -12,13 +12,4 @@ public class Greenhouse {
     public void Greenhouse(GreenhouseStorage greenhouseStorage) {
         this.greenhouseStorage = greenhouseStorage;
     }
-
-    public void printStatus() { // todo replace
-        Integer i = 0;
-        while( i < 10) {
-            i++;
-            System.out.println(greenhouseStorage.getStatus());
-        }
-    }
-
 }
