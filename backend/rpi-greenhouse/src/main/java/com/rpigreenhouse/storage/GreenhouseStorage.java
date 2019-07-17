@@ -2,7 +2,6 @@ package com.rpigreenhouse.storage;
 
 import com.rpigreenhouse.greenhouse.Tray;
 import com.rpigreenhouse.plants.Plant;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-// supposed to
 public class GreenhouseStorage {
     // todo make thread safe
     private Map<Integer, Tray> trays;

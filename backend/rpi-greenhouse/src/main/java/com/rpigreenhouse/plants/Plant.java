@@ -12,7 +12,7 @@ public class Plant {
 	private LocalDateTime plantedDateTime;
 
 	public Plant(String name, Integer waterLevel, Double growthSpeed, LocalDateTime plantedDateTime) {
-		this.plantId = UUID.randomUUID().toString();
+		this.plantId = UUID.randomUUID().toString(); // todo replace? maybe a bit of overkill
 		this.waterLevel = waterLevel;
 		this.name = name;
 		this.maturity = 0.0;
