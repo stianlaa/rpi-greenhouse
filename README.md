@@ -1,2 +1,2 @@
-# rpi-greenhouse
-A greenhouse application for raspberry pi
+# greenhouse
+A java greenhouse backend application for raspberry pi
