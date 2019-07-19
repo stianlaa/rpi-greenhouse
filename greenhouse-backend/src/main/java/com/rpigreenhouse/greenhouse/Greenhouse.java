@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Greenhouse {
-    GreenhouseStorage greenhouseStorage;
+    private GreenhouseStorage greenhouseStorage;
 
     @Autowired
     public void Greenhouse(GreenhouseStorage greenhouseStorage) {

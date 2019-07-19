@@ -3,6 +3,9 @@ package com.rpigreenhouse;
 import com.rpigreenhouse.plants.BasilPlant;
 import com.rpigreenhouse.plants.TomatoPlant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +13,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Month;
 import java.util.Arrays;
@@ -17,7 +21,6 @@ import java.util.Arrays;
 @Configuration
 @ComponentScan
 public class RpiGreenhouseApplicationConfig {
-
 
     @Bean
     @Scope("singleton")
@@ -41,5 +44,10 @@ public class RpiGreenhouseApplicationConfig {
         public void customize(ConfigurableWebServerFactory factory) {
             factory.setPort(8081);
         }
+    }
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
     }
 }

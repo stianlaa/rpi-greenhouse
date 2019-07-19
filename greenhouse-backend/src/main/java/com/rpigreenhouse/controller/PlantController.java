@@ -1,7 +1,8 @@
 package com.rpigreenhouse.controller;
 
-import com.rpigreenhouse.Exceptions.InvalidRequestException;
-import com.rpigreenhouse.Exceptions.PlantNotFoundException;
+import com.rpigreenhouse.consumer.WeatherConsumer;
+import com.rpigreenhouse.exceptions.InvalidRequestException;
+import com.rpigreenhouse.exceptions.PlantNotFoundException;
 import com.rpigreenhouse.greenhouse.Greenhouse;
 import com.rpigreenhouse.plants.Plant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.rpigreenhouse.GreenhouseLogger.debugLog;
+
 @RestController
 @RequestMapping("rest/")
 public class PlantController {
@@ -22,18 +25,23 @@ public class PlantController {
 
     @Autowired
     public PlantController(Greenhouse greenhouse,
-                           GreenhouseStorage greenhouseStorage) {
+                           GreenhouseStorage greenhouseStorage,
+                           WeatherConsumer weatherConsumer) {
         this.greenhouse = greenhouse;
         this.greenhouseStorage = greenhouseStorage;
     }
 
     @GetMapping("getplants")
     public List<Plant> getPlants() {
+        debugLog("received request for plants");
+
         return greenhouseStorage.getPlants();
     }
 
     @GetMapping("getplant/{plantid}")
     public Plant getPlantById(@PathVariable String plantid) {
+        debugLog("received request for specific plant");
+
         if (plantid.trim().isEmpty()) throw new InvalidRequestException("The request contained no id");
         return greenhouseStorage.getPlant(plantid)
                 .orElseThrow(PlantNotFoundException::new);

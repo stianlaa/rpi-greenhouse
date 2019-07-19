@@ -1,4 +1,4 @@
-package com.rpigreenhouse.Exceptions;
+package com.rpigreenhouse.exceptions;
 
 public class GreenhouseTechnicalException extends RuntimeException {
     public GreenhouseTechnicalException() {
