@@ -17,7 +17,6 @@ import java.util.Optional;
 @Component
 public class WeatherConsumer {
     private static final String YR_BASE_URL = "https://api.met.no/weatherapi/locationforecast/1.9/";
-    //params = {'lat': '59.91', 'lon': '10.63'}
     private RestTemplate restTemplate;
 
     public WeatherConsumer(RestTemplate restTemplate) {
@@ -25,7 +24,10 @@ public class WeatherConsumer {
     }
 
     public WeatherStatus fetchWeatherForecast() {
-        UriComponents uri = UriComponentsBuilder.fromHttpUrl(YR_BASE_URL).queryParam("lat", "59.91").queryParam("lon", "10.63").build();
+        UriComponents uri = UriComponentsBuilder
+                .fromHttpUrl(YR_BASE_URL)
+                .queryParam("lat", "59.91")
+                .queryParam("lon", "10.63").build();
 
         String testThisYo = restTemplate.getForObject(uri.toString(), String.class);
         return parseAndExtractRelevantFields(testThisYo);
