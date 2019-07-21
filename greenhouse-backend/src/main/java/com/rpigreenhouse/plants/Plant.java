@@ -34,17 +34,6 @@ public class Plant {
         this.plantedDateTime = LocalDateTime.now();
     }
 
-    public Integer calculateWaterNeed(LocalDate atDate) { // todo move to watermanager when created
-        if (atDate.isAfter(expectedHarvestDate)) {
-            return matureWaterNeed;
-        } else if (atDate.isBefore(plantedDateTime.toLocalDate())) {
-            return seedWaterNeed;
-        }
-        Float daysPassed = (float) ChronoUnit.DAYS.between(plantedDateTime.toLocalDate(), atDate);
-        Float matureDuration = (float) ChronoUnit.DAYS.between(plantedDateTime.toLocalDate(), expectedHarvestDate);
-        return Math.round(seedWaterNeed + (matureWaterNeed - seedWaterNeed) * (daysPassed / matureDuration));
-    }
-
     public void setIdealGrowthMonths(Month from, Month to) {
         this.idealGrowthMonths = Arrays.stream(Month.values()).map(month -> (month.getValue() > from.getValue() && month.getValue() < to.getValue())).
                 collect(Collectors.toList());

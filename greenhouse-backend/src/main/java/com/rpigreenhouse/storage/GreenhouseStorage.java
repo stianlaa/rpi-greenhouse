@@ -3,18 +3,17 @@ package com.rpigreenhouse.storage;
 import com.rpigreenhouse.greenhouse.Tray;
 import com.rpigreenhouse.plants.Plant;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class GreenhouseStorage {
 
-    private Map<Integer, Tray> trays;
+    private List<Tray> trays;
 
     public GreenhouseStorage() {
-        this.trays = new HashMap<>(); // fetch from storage.
+        this.trays = new ArrayList<>(); // fetch from storage.
     }
 
     public synchronized void addPlant(Integer trayId, Plant plant) {
@@ -22,13 +21,17 @@ public class GreenhouseStorage {
     }
 
     public synchronized void addTray(List<Plant> plants) {
-        trays.put(trays.size() + 1, new Tray(plants));
+        trays.add(new Tray(trays.size() + 1, plants));
     }
 
     public synchronized List<Plant> getPlants() {
-        return trays.values().stream()
+        return trays.stream()
                 .flatMap(tray -> tray.getPlants().stream())
                 .collect(Collectors.toList());
+    }
+
+    public synchronized List<Tray> getTrays() {
+        return trays;
     }
 
     public synchronized Optional<Plant> getPlant(String plantId) {

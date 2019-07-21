@@ -3,8 +3,6 @@ package com.rpigreenhouse;
 import com.rpigreenhouse.plants.BasilPlant;
 import com.rpigreenhouse.plants.TomatoPlant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
