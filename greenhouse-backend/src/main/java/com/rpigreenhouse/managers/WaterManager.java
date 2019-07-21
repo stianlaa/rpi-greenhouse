@@ -35,15 +35,20 @@ public class WaterManager {
         this.valveRegulator = new ValveRegulator();
     }
 
-    public Long startWaterCheckingSchedule(LocalDateTime firstWatering, Long wateringInterval) {
+    public void startWaterCheckingSchedule(LocalDateTime firstWatering, Long wateringInterval) {
         if (wateringSchedule == null) {
-            Long secondsToFirstWatering = findSecondsToFirstWatering(firstWatering);
-            wateringSchedule = service.scheduleAtFixedRate(this::waterAllPlants, secondsToFirstWatering, wateringInterval, TimeUnit.SECONDS);
-            return secondsToFirstWatering;
+            wateringSchedule = service.scheduleAtFixedRate(this::waterAllPlants,
+                    findSecondsToFirstWatering(firstWatering),
+                    wateringInterval,
+                    TimeUnit.SECONDS);
         }
 
         debugLog("The watering schedule was already started");
-        return wateringSchedule.getDelay(TimeUnit.SECONDS);
+    }
+
+    public LocalDateTime getNextWaterTime() {
+        if (wateringSchedule == null) return null;
+        return LocalDateTime.now().plusSeconds(wateringSchedule.getDelay(TimeUnit.SECONDS));
     }
 
     private Long findSecondsToFirstWatering(LocalDateTime startUpMoment) {
@@ -57,7 +62,7 @@ public class WaterManager {
             Integer waterForTray = 0;
             for (Plant plant : tray.getPlants()) {
                 Integer plantWaterNeed = calculatePlantWaterNeed(plant, LocalDate.now());
-                debugLog(String.format("Plant: %s requires %s ml water", plant.getPlantId().substring(0, 4), plantWaterNeed));
+                debugLog(String.format("Plant: %s requires %d ml water", plant.getPlantId(), plantWaterNeed));
 
                 waterForTray = waterForTray + plantWaterNeed;
             }

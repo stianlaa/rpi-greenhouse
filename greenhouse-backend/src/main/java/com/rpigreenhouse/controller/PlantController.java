@@ -1,16 +1,17 @@
 package com.rpigreenhouse.controller;
 
+import com.rpigreenhouse.consumer.WeatherConsumer;
+import com.rpigreenhouse.consumer.WeatherStatus;
 import com.rpigreenhouse.exceptions.InvalidRequestException;
 import com.rpigreenhouse.exceptions.PlantNotFoundException;
-import com.rpigreenhouse.plants.Plant;
+import com.rpigreenhouse.managers.WaterManager;
 import com.rpigreenhouse.storage.GreenhouseStorage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.rpigreenhouse.GreenhouseLogger.debugLog;
 
@@ -19,24 +20,41 @@ import static com.rpigreenhouse.GreenhouseLogger.debugLog;
 public class PlantController {
 
     private GreenhouseStorage greenhouseStorage;
+    private WaterManager waterManager;
+    private WeatherConsumer weatherConsumer;
 
     @Autowired
-    public PlantController(GreenhouseStorage greenhouseStorage) {
+    public PlantController(GreenhouseStorage greenhouseStorage,
+                           WaterManager waterManager,
+                           WeatherConsumer weatherConsumer) {
         this.greenhouseStorage = greenhouseStorage;
+        this.waterManager = waterManager;
+        this.weatherConsumer = weatherConsumer;
     }
 
     @GetMapping("getplants")
-    public List<Plant> getPlants() {
+    public List<PlantTo> getPlants() {
         debugLog("received request for all plants");
-        return greenhouseStorage.getPlants();
+        return greenhouseStorage.getPlants().stream().map(PlantTo::new).collect(Collectors.toList());
     }
 
     @GetMapping("getplant/{plantid}")
-    public Plant getPlantById(@PathVariable String plantid) {
-        debugLog(String.format("received request for plant: {}", plantid));
+    public PlantTo getPlantById(@PathVariable String plantid) {
+        debugLog(String.format("received request for plant: %s", plantid));
 
         if (plantid.trim().isEmpty()) throw new InvalidRequestException("The request contained no id");
-        return greenhouseStorage.getPlant(plantid)
-                .orElseThrow(PlantNotFoundException::new);
+        return new PlantTo(greenhouseStorage.getPlant(plantid)
+                .orElseThrow(PlantNotFoundException::new));
+    }
+
+    @GetMapping("nextwatering") // todo move to statuscontroller?
+    public LocalDateTime getNextWaterTime() {
+        return waterManager.getNextWaterTime();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "getweather", method = RequestMethod.GET, produces = "application/json")
+    public WeatherStatus getCurrentWeather() {
+        return weatherConsumer.fetchWeatherForecast();
     }
 }

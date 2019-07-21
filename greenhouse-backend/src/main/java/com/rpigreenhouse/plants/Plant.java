@@ -2,11 +2,12 @@ package com.rpigreenhouse.plants;
 
 import lombok.Data;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -14,6 +15,10 @@ import java.util.stream.Collectors;
 
 @Data
 public class Plant {
+
+    @Id
+    @GeneratedValue
+    protected int dbId;
 
     protected String plantId;
     protected String plantType;

@@ -1,7 +1,9 @@
 package com.rpigreenhouse.greenhouse;
 
+import com.rpigreenhouse.consumer.WeatherStatus;
 import com.rpigreenhouse.managers.WaterManager;
 import com.rpigreenhouse.storage.GreenhouseStorage;
+import com.rpigreenhouse.storage.weather.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,13 +16,23 @@ public class Greenhouse {
 
     private GreenhouseStorage greenhouseStorage;
     private WaterManager waterManager;
+    private WeatherService weatherService;
 
     @Autowired
     public void Greenhouse(GreenhouseStorage greenhouseStorage,
-                           WaterManager waterManager) {
+                           WaterManager waterManager,
+                           WeatherService weatherService) {
         this.greenhouseStorage = greenhouseStorage;
         this.waterManager = waterManager;
+        this.weatherService = weatherService;
 
-        waterManager.startWaterCheckingSchedule(firstWatering, interval);
+        weatherService.saveOrUpdateWeatherStatus(WeatherStatus.builder() // todo remove after db in place.
+                .temperature(50.0)
+                .build());
+        weatherService.saveOrUpdateWeatherStatus(WeatherStatus.builder()
+                .temperature(75.0)
+                .build());
+
+        //        waterManager.startWaterCheckingSchedule(firstWatering, interval); // todo resume when relevant.
     }
 }

@@ -37,7 +37,6 @@ public class RpiGreenhouseApplicationConfig {
 
     @Component
     public class CustomizationPort implements WebServerFactoryCustomizer<ConfigurableWebServerFactory> {
-
         @Override
         public void customize(ConfigurableWebServerFactory factory) {
             factory.setPort(8081);
