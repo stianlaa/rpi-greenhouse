@@ -1,4 +1,4 @@
-package com.rpigreenhouse.managers;
+package com.rpigreenhouse.managers.watering;
 
 import java.util.concurrent.TimeUnit;
 

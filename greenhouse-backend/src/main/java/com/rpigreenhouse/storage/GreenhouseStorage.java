@@ -2,36 +2,28 @@ package com.rpigreenhouse.storage;
 
 import com.rpigreenhouse.greenhouse.Tray;
 import com.rpigreenhouse.plants.Plant;
+import com.rpigreenhouse.storage.plant.PlantService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class GreenhouseStorage {
 
-    private List<Tray> trays;
+    private PlantService plantService;
 
-    public GreenhouseStorage() {
-        this.trays = new ArrayList<>(); // fetch from storage.
+    public GreenhouseStorage(PlantService plantService) {
+        this.plantService = plantService;
     }
 
-    public synchronized void addPlant(Integer trayId, Plant plant) {
-        trays.get(trayId).addPlant(plant);
+    public List<Plant> getPlants() {
+        return plantService.getAllPlants();
     }
 
-    public synchronized void addTray(List<Plant> plants) {
-        trays.add(new Tray(trays.size() + 1, plants));
-    }
-
-    public synchronized List<Plant> getPlants() {
-        return trays.stream()
-                .flatMap(tray -> tray.getPlants().stream())
-                .collect(Collectors.toList());
-    }
-
-    public synchronized List<Tray> getTrays() {
-        return trays;
+    public synchronized void addPlant(Plant plant) {
+        plantService.saveOrUpdatePlant(plant);
     }
 
     public synchronized Optional<Plant> getPlant(String plantId) {
@@ -42,5 +34,22 @@ public class GreenhouseStorage {
         StringBuilder statusString = new StringBuilder();
         getPlants().forEach(plant -> statusString.append(plant.getStatus()));
         return statusString.toString();
+    }
+
+    public List<Tray> getTraysWithPlants() {
+        List<Tray> trays = new ArrayList<>();
+        List<Plant> plants = getPlants();
+
+        Set<Integer> trayIds = plants.stream()
+                .map(Plant::getTrayId)
+                .collect(Collectors.toSet());
+
+        for (Integer trayId : trayIds) {
+            trays.add(new Tray(trays.size() + 1,
+                    plants.stream()
+                            .filter(plant -> plant.getTrayId() == trayId)
+                            .collect(Collectors.toList())));
+        }
+        return trays;
     }
 }

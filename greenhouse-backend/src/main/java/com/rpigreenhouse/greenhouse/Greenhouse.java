@@ -1,26 +1,56 @@
 package com.rpigreenhouse.greenhouse;
 
-import com.rpigreenhouse.managers.WaterManager;
+import com.rpigreenhouse.managers.watering.WaterManager;
+import com.rpigreenhouse.plants.BasilPlant;
+import com.rpigreenhouse.plants.TomatoPlant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 
 @Component
 public class Greenhouse {
-    private static final LocalDateTime firstWatering = LocalDateTime.now().plusSeconds(5); // todo replace with appropriate first startuptime, e.g 07:00
-    private static final Long interval = 10L; // todo replace with 24 hrs
+
+    private LocalDateTime firstWatering;
+    private Long wateringInterval;
 
     private GreenhouseStorage greenhouseStorage;
     private WaterManager waterManager;
 
     @Autowired
     public void Greenhouse(GreenhouseStorage greenhouseStorage,
-                           WaterManager waterManager) {
+                           WaterManager waterManager,
+                           @Value("${greenhouse.firstWateringHour}") Integer firstWateringHour,
+                           @Value("${greenhouse.firstWateringMinute}") Integer firstWateringMinute,
+                           @Value("${greenhouse.wateringInterval}") Long wateringInterval) {
         this.greenhouseStorage = greenhouseStorage;
         this.waterManager = waterManager;
+        this.wateringInterval = wateringInterval;
+        this.firstWatering = findNextWateringTime(firstWateringHour, firstWateringMinute);
 
-        waterManager.startWaterCheckingSchedule(firstWatering, interval);
+        addStartupMockData();
+
+        if (firstWatering != null && wateringInterval != null)
+            waterManager.startWaterCheckingSchedule(firstWatering, wateringInterval);
+    }
+
+    private void addStartupMockData() {
+        greenhouseStorage.addPlant(new TomatoPlant(1).setIdealGrowthMonths(Month.APRIL, Month.AUGUST));
+        greenhouseStorage.addPlant(new TomatoPlant(1));
+        greenhouseStorage.addPlant(new TomatoPlant(1));
+        greenhouseStorage.addPlant(new BasilPlant(2));
+        greenhouseStorage.addPlant(new BasilPlant(2));
+    }
+
+    private LocalDateTime findNextWateringTime(Integer firstWateringHour, Integer firstWateringMinute) {
+        if (LocalDate.now().atTime(firstWateringHour, firstWateringMinute).isBefore(LocalDateTime.now())) {
+            return LocalDate.now().atTime(firstWateringHour, firstWateringMinute).plusDays(1);
+        } else {
+            return LocalDate.now().atTime(firstWateringHour, firstWateringMinute);
+        }
     }
 }
