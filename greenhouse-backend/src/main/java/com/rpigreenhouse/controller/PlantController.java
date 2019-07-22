@@ -4,7 +4,8 @@ import com.rpigreenhouse.consumer.WeatherConsumer;
 import com.rpigreenhouse.consumer.WeatherStatus;
 import com.rpigreenhouse.exceptions.InvalidRequestException;
 import com.rpigreenhouse.exceptions.PlantNotFoundException;
-import com.rpigreenhouse.managers.WaterManager;
+import com.rpigreenhouse.managers.watering.WaterManager;
+import com.rpigreenhouse.plants.BasilPlant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +46,12 @@ public class PlantController {
         if (plantid.trim().isEmpty()) throw new InvalidRequestException("The request contained no id");
         return new PlantTo(greenhouseStorage.getPlant(plantid)
                 .orElseThrow(PlantNotFoundException::new));
+    }
+
+    @PostMapping("addplant")
+    public void addPlant() {
+        greenhouseStorage.addPlant(new BasilPlant(2));
+        debugLog("received request to add new plant");
     }
 
     @GetMapping("nextwatering") // todo move to statuscontroller?

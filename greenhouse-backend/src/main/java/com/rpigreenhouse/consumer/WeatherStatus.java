@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 
 @Value
 @Builder
-@Entity
-public class WeatherStatus {
+@Entity(name = "WEATHERSTATUS_TABLE")
+public class WeatherStatus { // todo consider adding DAO layer
 
     @Id
     @GeneratedValue

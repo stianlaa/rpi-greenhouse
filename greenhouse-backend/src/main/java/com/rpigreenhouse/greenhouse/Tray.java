@@ -17,10 +17,6 @@ public class Tray {
         return trayId;
     }
 
-    public void addPlant(Plant plant) {
-        containsPlants.add(plant);
-    }
-
     public List<Plant> getPlants() {
         return containsPlants;
     }

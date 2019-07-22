@@ -36,22 +36,22 @@ public class WeatherConsumer {
     private WeatherStatus parseAndExtractRelevantFields(String weatherStatusXml) {
         Document doc = Jsoup.parse(weatherStatusXml, "", Parser.xmlParser());
 
-        // todo make readable
         Optional<Element> weatherOptional = doc
-                .select("product")
-                .select("time")
+                .select("product").select("time")
                 .stream()
-                .filter(element -> element.getElementsByAttribute("from").toString().contains(LocalDateTime.now().toString().substring(0, 13)))
+                .filter(this::checkIfCurrentHour)
                 .findFirst();
 
-        if (weatherOptional.isPresent()) { // todo make robust, perhaps only accept full WeatherStatus objects
-            return WeatherStatus.builder()
-                    .sampletime(LocalDateTime.parse(weatherOptional.get().attr("from").substring(0, 19)))
-                    .temperature(Double.parseDouble(weatherOptional.get().select("temperature").first().attr("value")))
-                    .cloudiness(Double.parseDouble(weatherOptional.get().select("cloudiness").first().attr("percent")))
-                    .humidity(Double.parseDouble(weatherOptional.get().select("humidity").first().attr("value")))
-                    .build();
-        }
-        return null;
+        return weatherOptional.map(element -> WeatherStatus.builder()
+                .sampletime(LocalDateTime.parse(element.attr("from").substring(0, 19)))
+                .temperature(Double.parseDouble(element.select("temperature").first().attr("value")))
+                .cloudiness(Double.parseDouble(element.select("cloudiness").first().attr("percent")))
+                .humidity(Double.parseDouble(element.select("humidity").first().attr("value")))
+                .build()).orElse(null);
+    }
+
+    private Boolean checkIfCurrentHour(Element timeElement) {
+        return timeElement.getElementsByAttribute("from").toString()
+                .contains(LocalDateTime.now().toString().substring(0, 13));
     }
 }

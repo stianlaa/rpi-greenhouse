@@ -11,8 +11,8 @@ public class BasilPlant extends Plant {
     private static final Integer SEED_WATER_NEED = 5;
     private static final Integer MATURE_WATER_NEED = 25;
 
-    public BasilPlant() {
-        super();
+    public BasilPlant(int trayId) {
+        super(trayId);
         this.plantType = BASIL_NAME;
         this.expectedHarvestDate = LocalDate.now().plusDays(DAYS_TO_HARVEST);
         this.seedWaterNeed = SEED_WATER_NEED;

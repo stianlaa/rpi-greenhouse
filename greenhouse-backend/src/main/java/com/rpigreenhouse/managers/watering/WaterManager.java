@@ -1,4 +1,4 @@
-package com.rpigreenhouse.managers;
+package com.rpigreenhouse.managers.watering;
 
 import com.rpigreenhouse.greenhouse.Tray;
 import com.rpigreenhouse.plants.Plant;
@@ -16,6 +16,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static com.rpigreenhouse.GreenhouseLogger.debugLog;
+import static com.rpigreenhouse.GreenhouseLogger.errorLog;
 
 @Component
 public class WaterManager {
@@ -42,7 +43,6 @@ public class WaterManager {
                     wateringInterval,
                     TimeUnit.SECONDS);
         }
-
         debugLog("The watering schedule was already started");
     }
 
@@ -58,7 +58,7 @@ public class WaterManager {
     private void waterAllPlants() {
         debugLog("Watering all plants");
 
-        for (Tray tray : greenhouseStorage.getTrays()) {
+        for (Tray tray : greenhouseStorage.getTraysWithPlants()) {
             Integer waterForTray = 0;
             for (Plant plant : tray.getPlants()) {
                 Integer plantWaterNeed = calculatePlantWaterNeed(plant, LocalDate.now());
@@ -82,7 +82,8 @@ public class WaterManager {
                     if (trayWateringComplete) break;
                     TimeUnit.MILLISECONDS.sleep(500L);
                 } catch (InterruptedException e) {
-                    e.printStackTrace(); // todo log and handle
+                    errorLog("Interrupt order received while dispensing water");
+                    // todo turn pump pins off
                 }
             }
         }
