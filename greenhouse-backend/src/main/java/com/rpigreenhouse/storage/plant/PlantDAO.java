@@ -50,6 +50,7 @@ public class PlantDAO {
         return Plant.builder()
                 .trayId(this.trayId)
                 .plantId(this.plantId)
+                .plantType(this.plantType)
                 .plantedDateTime(this.plantedDateTime)
                 .expectedHarvestDate(this.expectedHarvestDate)
                 .idealGrowthMonthsFrom(this.getIdealGrowthMonthsFrom())

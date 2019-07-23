@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 public class PlantTo {
 
+    protected int trayId;
     private String plantId;
     private String plantType;
     private LocalDateTime plantedDateTime;
@@ -19,6 +20,7 @@ public class PlantTo {
     private Integer matureWaterNeed;
 
     public PlantTo(Plant plant) {
+        this.trayId = plant.getTrayId();
         this.plantId = plant.getPlantId();
         this.plantType = plant.getPlantType();
         this.plantedDateTime = plant.getPlantedDateTime();
