@@ -9,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,5 +67,16 @@ public class Plant {
         } else {
             return new ArrayList<>();
         }
+    }
+
+    public float getMaturityPercentage() {
+        Float secondsPassed = (float) ChronoUnit.SECONDS.between(this.plantedDateTime, LocalDateTime.now());
+        Float secondsToPass = (float) ChronoUnit.SECONDS.between(this.plantedDateTime, this.expectedHarvestDate.atTime(12 ,0));
+        if (secondsPassed / secondsToPass > 1) {
+            return 1.0f;
+        } else if (secondsPassed / secondsToPass < 0) {
+            return 0.0f;
+        }
+        return secondsPassed/secondsToPass;
     }
 }

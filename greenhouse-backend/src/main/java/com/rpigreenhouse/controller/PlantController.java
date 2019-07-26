@@ -54,7 +54,6 @@ public class PlantController {
         for (Integer trayId : trayIds) {
             traysWithPlants.add(
                     plantList.stream().filter(plant -> plant.getTrayId() == trayId).map(PlantTo::new).collect(Collectors.toList())
-
             );
         }
         debugLog("received request for all plants");
@@ -87,6 +86,10 @@ public class PlantController {
     @CrossOrigin
     @RequestMapping(value = "getweather", method = RequestMethod.GET, produces = "application/json")
     public WeatherStatus getCurrentWeather() {
-        return weatherConsumer.fetchWeatherForecast();
+        return WeatherStatus.builder().temperature(5.0).humidity(2.0).cloudiness(4.5).build();
     }
+//    public WeatherStatus getCurrentWeather() {
+//        return weatherConsumer.fetchWeatherForecast();
+//    }
+
 }

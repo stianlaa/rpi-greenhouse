@@ -40,10 +40,10 @@ public class Greenhouse {
 
     private void addStartupMockData() {
         greenhouseStorage.addPlant(new TomatoPlant(1).setIdealGrowthMonths(Month.APRIL, Month.AUGUST));
-        greenhouseStorage.addPlant(new TomatoPlant(1));
-        greenhouseStorage.addPlant(new TomatoPlant(1));
-        greenhouseStorage.addPlant(new BasilPlant(2));
-        greenhouseStorage.addPlant(new BasilPlant(2));
+        greenhouseStorage.addPlant(new TomatoPlant(1).setIdealGrowthMonths(Month.APRIL, Month.AUGUST));
+        greenhouseStorage.addPlant(new TomatoPlant(1).setIdealGrowthMonths(Month.APRIL, Month.AUGUST));
+        greenhouseStorage.addPlant(new BasilPlant(2).setIdealGrowthMonths(Month.MARCH, Month.SEPTEMBER));
+        greenhouseStorage.addPlant(new BasilPlant(2).setIdealGrowthMonths(Month.MARCH, Month.SEPTEMBER));
     }
 
     private LocalDateTime findNextWateringTime(Integer firstWateringHour, Integer firstWateringMinute) {

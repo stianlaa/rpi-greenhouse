@@ -18,6 +18,7 @@ public class PlantTo {
     private List<Boolean> idealGrowthMonths;
     private Integer seedWaterNeed;
     private Integer matureWaterNeed;
+    private Float maturityPercentage;
 
     public PlantTo(Plant plant) {
         this.trayId = plant.getTrayId();
@@ -28,5 +29,6 @@ public class PlantTo {
         this.idealGrowthMonths = plant.getIdealGrowthMonths();
         this.seedWaterNeed = plant.getSeedWaterNeed();
         this.matureWaterNeed = plant.getMatureWaterNeed();
+        this.maturityPercentage = plant.getMaturityPercentage();
     }
 }
