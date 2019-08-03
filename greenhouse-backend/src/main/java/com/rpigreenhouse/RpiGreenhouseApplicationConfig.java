@@ -3,6 +3,7 @@ package com.rpigreenhouse;
 import com.rpigreenhouse.storage.GreenhouseStorage;
 import com.rpigreenhouse.storage.plant.PlantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.server.ConfigurableWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -21,7 +22,7 @@ public class RpiGreenhouseApplicationConfig {
     private PlantService plantService;
 
     @Bean
-    @Scope("singleton")
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
     GreenhouseStorage plantStatusStorage() {
         return new GreenhouseStorage(plantService);
     }
@@ -38,4 +39,5 @@ public class RpiGreenhouseApplicationConfig {
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
         return builder.build();
     }
+
 }

@@ -51,6 +51,14 @@
 			<version>1.7.25</version>
 		</dependency>
 
+<!--		gpio-->
+		<dependency>
+			<groupId>com.pi4j</groupId>
+			<artifactId>pi4j-core</artifactId>
+			<version>1.2</version>
+			<scope>compile</scope>
+		</dependency>
+
 <!--		Database-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
