@@ -30,9 +30,10 @@ public class WaterManager {
 
     private Map<Integer, Integer> trayWaterOrders = new TreeMap<>();
 
-    public WaterManager(GreenhouseStorage greenhouseStorage) {
+    public WaterManager(GreenhouseStorage greenhouseStorage,
+                        PumpRegulator pumpRegulator) {
         this.greenhouseStorage = greenhouseStorage;
-        this.pumpRegulator = new PumpRegulator();
+        this.pumpRegulator = pumpRegulator;
         this.valveRegulator = new ValveRegulator();
     }
 

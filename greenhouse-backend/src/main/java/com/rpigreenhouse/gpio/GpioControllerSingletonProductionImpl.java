@@ -1,15 +1,15 @@
 package com.rpigreenhouse.gpio;
 
 import com.pi4j.io.gpio.*;
-import com.rpigreenhouse.gpio.GpioControllerSingleton;
+import com.rpigreenhouse.exceptions.UnexpectedPinUseException;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import static com.rpigreenhouse.GreenhouseLogger.debugLog;
 import static com.rpigreenhouse.GreenhouseLogger.errorLog;
 
 @Component
@@ -17,25 +17,30 @@ import static com.rpigreenhouse.GreenhouseLogger.errorLog;
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class GpioControllerSingletonProductionImpl implements GpioControllerSingleton {
 
+    private final static List<Integer> FUNCTIONAL_PINS = new ArrayList<>(Arrays.asList(9, 10, 22, 27, 17, 4, 3, 2));
     private final GpioController gpio;
     private final Map<Integer, GpioPinDigitalOutput> provisionedPins = new HashMap<>();
 
     public GpioControllerSingletonProductionImpl() {
-        errorLog("Production GPIO BEAN WAS CREATED");
         this.gpio = GpioFactory.getInstance();
     }
 
     public void setPin(int address, Boolean state) {
-        errorLog(String.format("Put the pin %d to state %b", address, state)); // todo replace with sensible level
+        if (!FUNCTIONAL_PINS.contains(address)) {
+            errorLog(String.format("Put the pin %d to state %b", address, state));
+            throw new UnexpectedPinUseException(address);
+        }
+
         if (!provisionedPins.containsKey(address)) {
             Pin pinToProvision = RaspiPin.getPinByAddress(address);
             provisionDigitalOutputPin(pinToProvision);
         }
+
+        debugLog(String.format("Setting pin: %d state to %b", address, state));
         provisionedPins.get(address).setState(state);
     }
 
-    public void provisionDigitalOutputPin(Pin pinToProvision) {
-        // provision gpio pin
+    private void provisionDigitalOutputPin(Pin pinToProvision) {
         final GpioPinDigitalOutput provisionedPin = gpio.provisionDigitalOutputPin(pinToProvision, pinToProvision.getName(), PinState.LOW);
         provisionedPin.setShutdownOptions(true, PinState.LOW);
 
@@ -43,7 +48,12 @@ public class GpioControllerSingletonProductionImpl implements GpioControllerSing
     }
 
     public Boolean getPinState(int address) {
-        return false; // todo fix
+        return false; // todo implemented when needed
     }
 
+    public void setAllPinsLow() {
+        for (Integer pinAddress : provisionedPins.keySet()) {
+            provisionedPins.get(pinAddress).setState(false);
+        }
+    }
 }

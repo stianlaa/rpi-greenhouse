@@ -34,8 +34,8 @@ public class Greenhouse {
 
         addStartupMockData();
 
-        if (firstWatering != null && wateringInterval != null)
-            waterManager.startWaterCheckingSchedule(firstWatering, wateringInterval);
+//        if (firstWatering != null && wateringInterval != null)
+//            waterManager.startWaterCheckingSchedule(firstWatering, wateringInterval);
     }
 
     private void addStartupMockData() {
