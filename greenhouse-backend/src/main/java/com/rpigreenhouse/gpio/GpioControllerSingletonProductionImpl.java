@@ -17,7 +17,7 @@ import static com.rpigreenhouse.GreenhouseLogger.errorLog;
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class GpioControllerSingletonProductionImpl implements GpioControllerSingleton {
 
-    private final static List<Integer> FUNCTIONAL_PINS = new ArrayList<>(Arrays.asList(9, 10, 22, 27, 17, 4, 3, 2));
+    private final static List<Integer> FUNCTIONAL_PINS = new ArrayList<>(Arrays.asList(0, 2)); // todo add more as needed
     private final GpioController gpio;
     private final Map<Integer, GpioPinDigitalOutput> provisionedPins = new HashMap<>();
 
