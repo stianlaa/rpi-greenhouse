@@ -38,8 +38,14 @@ public class WateringController {
     }
 
     @CrossOrigin
-    @GetMapping("startwatersystem") // todo remove, used for test
-    public String startWaterSystem() {
+    @GetMapping("startwatersystem")
+    public String startWaterSchedule() {
+        return waterManager.startWaterCheckingSchedule(LocalDateTime.now().plusSeconds(5), 120L).toString();
+    }
+
+    @CrossOrigin
+    @GetMapping("stopwatersystem")
+    public String stopWaterSchedule() {
         waterManager.startWaterCheckingSchedule(LocalDateTime.now().plusSeconds(5), 120L);
         return waterManager.getNextWaterTime().toString();
     }

@@ -15,8 +15,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static com.rpigreenhouse.GreenhouseLogger.debugLog;
-import static com.rpigreenhouse.GreenhouseLogger.errorLog;
+import static com.rpigreenhouse.GreenhouseLogger.*;
 
 @Component
 public class WaterManager {
@@ -37,7 +36,7 @@ public class WaterManager {
         this.valveRegulator = new ValveRegulator();
     }
 
-    public void startWaterCheckingSchedule(LocalDateTime firstWatering, Long wateringInterval) {
+    public Long startWaterCheckingSchedule(LocalDateTime firstWatering, Long wateringInterval) {
         if (wateringSchedule == null) {
             wateringSchedule = service.scheduleAtFixedRate(this::waterAllPlants,
                     findSecondsToFirstWatering(firstWatering),
@@ -45,6 +44,15 @@ public class WaterManager {
                     TimeUnit.SECONDS);
         }
         debugLog("The watering schedule was already started");
+        return wateringSchedule.getDelay(TimeUnit.SECONDS);
+    }
+
+    public void stopWaterCheckingSchedule() {
+        if (wateringSchedule == null) {
+            warnLog("Tried to cancel watering schedule, but no schedule existed");
+        } else {
+            wateringSchedule.cancel(true);
+        }
     }
 
     public LocalDateTime getNextWaterTime() {
