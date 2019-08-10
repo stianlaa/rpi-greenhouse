@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static com.rpigreenhouse.GreenhouseLogger.debugLog;
-import static com.rpigreenhouse.GreenhouseLogger.errorLog;
+import static com.rpigreenhouse.GreenhouseLogger.*;
 
 @Component
 @Profile("prod")
@@ -25,6 +24,7 @@ public class GpioControllerSingletonProductionImpl implements GpioControllerSing
         this.gpio = GpioFactory.getInstance();
     }
 
+    @Override
     public void setPin(int address, Boolean state) {
         if (!FUNCTIONAL_PINS.contains(address)) {
             errorLog(String.format("Put the pin %d to state %b", address, state));
@@ -40,20 +40,23 @@ public class GpioControllerSingletonProductionImpl implements GpioControllerSing
         provisionedPins.get(address).setState(state);
     }
 
+    @Override
+    public Boolean getPinState(int address) {
+        return false; // todo implemented when needed
+    }
+
+    @Override
+    public void setAllPinsLow() {
+        infoLog("Setting all pins low");
+        for (Integer pinAddress : provisionedPins.keySet()) {
+            provisionedPins.get(pinAddress).setState(false);
+        }
+    }
+
     private void provisionDigitalOutputPin(Pin pinToProvision) {
         final GpioPinDigitalOutput provisionedPin = gpio.provisionDigitalOutputPin(pinToProvision, pinToProvision.getName(), PinState.LOW);
         provisionedPin.setShutdownOptions(true, PinState.LOW);
 
         this.provisionedPins.put(pinToProvision.getAddress(), provisionedPin);
-    }
-
-    public Boolean getPinState(int address) {
-        return false; // todo implemented when needed
-    }
-
-    public void setAllPinsLow() {
-        for (Integer pinAddress : provisionedPins.keySet()) {
-            provisionedPins.get(pinAddress).setState(false);
-        }
     }
 }

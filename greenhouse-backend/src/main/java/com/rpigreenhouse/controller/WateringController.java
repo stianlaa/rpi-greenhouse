@@ -1,14 +1,13 @@
 package com.rpigreenhouse.controller;
 
-import com.rpigreenhouse.consumer.WeatherConsumer;
+import com.rpigreenhouse.exceptions.WaterManagerBusyException;
 import com.rpigreenhouse.managers.watering.WaterManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+
+import static com.rpigreenhouse.GreenhouseLogger.errorLog;
 
 
 @RestController
@@ -16,19 +15,10 @@ import java.time.LocalDateTime;
 public class WateringController {
 
     private WaterManager waterManager;
-    private WeatherConsumer weatherConsumer;
-
-
-    private Boolean testToggle;
-    private static final int TESTPIN_1 = 0;
-    private static final int TESTPIN_2 = 2;
 
     @Autowired
-    public WateringController(WaterManager waterManager,
-                              WeatherConsumer weatherConsumer) {
+    public WateringController(WaterManager waterManager) {
         this.waterManager = waterManager;
-        this.weatherConsumer = weatherConsumer;
-        this.testToggle = false;
     }
 
     @CrossOrigin
@@ -38,16 +28,26 @@ public class WateringController {
     }
 
     @CrossOrigin
-    @GetMapping("startwatersystem")
+    @GetMapping("start")
     public String startWaterSchedule() {
         return waterManager.startWaterCheckingSchedule(LocalDateTime.now().plusSeconds(5), 120L).toString();
     }
 
     @CrossOrigin
-    @GetMapping("stopwatersystem")
-    public String stopWaterSchedule() {
-        waterManager.startWaterCheckingSchedule(LocalDateTime.now().plusSeconds(5), 120L);
-        return waterManager.getNextWaterTime().toString();
+    @GetMapping("stop")
+    public void stopWaterSchedule() {
+        waterManager.stopWaterCheckingSchedule();
     }
 
+    @CrossOrigin
+    @GetMapping("watertray/{trayid}/{mlvolume}")
+    public void waterTrayManually(@PathVariable Integer trayid,
+                                  @PathVariable Integer mlvolume) {
+        if (waterManager.getBusyStatus()) {
+            errorLog("The watering manager is currently busy.");
+            throw new WaterManagerBusyException();
+        } else {
+            waterManager.giveTrayWater(trayid, mlvolume);
+        }
+    }
 }

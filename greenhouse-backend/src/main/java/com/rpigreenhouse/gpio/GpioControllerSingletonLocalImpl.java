@@ -20,13 +20,23 @@ public class GpioControllerSingletonLocalImpl implements GpioControllerSingleton
     public GpioControllerSingletonLocalImpl() {
     }
 
+    @Override
     public void setPin(int address, Boolean state) {
         infoLog(String.format("Local test without hardware: put the pin %d to state %b", address, state));
         provisionedPins.put(address, state);
     }
 
+    @Override
     public Boolean getPinState(int address) {
         return provisionedPins.get(address);
     }
 
+    @Override
+    public void setAllPinsLow() {
+        infoLog("Setting all pins low");
+        for (Integer pinAddress : provisionedPins.keySet()) {
+            provisionedPins.put(pinAddress, false);
+        }
+        System.out.println(provisionedPins);
+    }
 }
