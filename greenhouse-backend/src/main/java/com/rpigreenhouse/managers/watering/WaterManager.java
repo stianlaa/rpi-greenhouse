@@ -37,10 +37,11 @@ public class WaterManager {
 
     public WaterManager(GreenhouseStorage greenhouseStorage,
                         PumpRegulator pumpRegulator,
+                        ValveRegulator valveRegulator,
                         GpioControllerSingleton gpioControllerSingleton) {
         this.greenhouseStorage = greenhouseStorage;
         this.pumpRegulator = pumpRegulator;
-        this.valveRegulator = new ValveRegulator();
+        this.valveRegulator = valveRegulator;
         this.gpioControllerSingleton = gpioControllerSingleton;
     }
 
