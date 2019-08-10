@@ -1,18 +1,13 @@
 package com.rpigreenhouse.controller;
 
-import com.rpigreenhouse.consumer.WeatherConsumer;
-import com.rpigreenhouse.consumer.WeatherStatus;
 import com.rpigreenhouse.exceptions.InvalidRequestException;
 import com.rpigreenhouse.exceptions.PlantNotFoundException;
-import com.rpigreenhouse.gpio.GpioControllerSingleton;
-import com.rpigreenhouse.managers.watering.WaterManager;
 import com.rpigreenhouse.plants.BasilPlant;
 import com.rpigreenhouse.plants.Plant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -22,17 +17,14 @@ import static com.rpigreenhouse.GreenhouseLogger.debugLog;
 
 
 @RestController
-@RequestMapping("rest/")
+@RequestMapping("rest/greenhouse/")
 public class PlantController {
 
     private GreenhouseStorage greenhouseStorage;
-    private WeatherConsumer weatherConsumer;
 
     @Autowired
-    public PlantController(GreenhouseStorage greenhouseStorage,
-                           WeatherConsumer weatherConsumer) {
+    public PlantController(GreenhouseStorage greenhouseStorage) {
         this.greenhouseStorage = greenhouseStorage;
-        this.weatherConsumer = weatherConsumer;
     }
 
     @CrossOrigin
@@ -74,14 +66,4 @@ public class PlantController {
         greenhouseStorage.addPlant(new BasilPlant(2));
         debugLog("received request to add new plant");
     }
-
-    @CrossOrigin
-    @RequestMapping(value = "getweather", method = RequestMethod.GET, produces = "application/json")
-    public WeatherStatus getCurrentWeather() {
-        return WeatherStatus.builder().temperature(5.0).humidity(2.0).cloudiness(4.5).build(); // todo remove when frequent testing is complete, and setup cache system
-    }
-//    public WeatherStatus getCurrentWeather() {
-//        return weatherConsumer.fetchWeatherForecast();
-//    }
-
 }

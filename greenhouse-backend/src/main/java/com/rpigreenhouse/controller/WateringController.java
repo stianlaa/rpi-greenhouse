@@ -11,7 +11,7 @@ import static com.rpigreenhouse.GreenhouseLogger.errorLog;
 
 
 @RestController
-@RequestMapping("rest/")
+@RequestMapping("rest/watering/")
 public class WateringController {
 
     private WaterManager waterManager;
