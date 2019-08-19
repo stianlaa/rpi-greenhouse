@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,11 @@ public class GpioControllerSingletonLocalImpl implements GpioControllerSingleton
     private final Map<Integer, Boolean> provisionedPins = new HashMap<>();
 
     public GpioControllerSingletonLocalImpl() {
+    }
+
+    @PreDestroy
+    public void destroy() {
+        setAllPinsLow();
     }
 
     @Override

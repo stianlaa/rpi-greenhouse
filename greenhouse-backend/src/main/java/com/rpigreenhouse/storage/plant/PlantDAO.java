@@ -3,9 +3,7 @@ package com.rpigreenhouse.storage.plant;
 import com.rpigreenhouse.plants.Plant;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -29,6 +27,11 @@ public class PlantDAO {
     private Integer seedWaterNeed;
     private Integer matureWaterNeed;
 
+    @Lob
+    @Column(name="PLANT_IMAGE", nullable=false, columnDefinition="mediumblob")
+    private byte[] plantImage;
+
+
     public PlantDAO() {
         super();
     }
@@ -44,6 +47,8 @@ public class PlantDAO {
         this.idealGrowthMonthsTo = plant.getIdealGrowthMonthsTo();
         this.seedWaterNeed = plant.getSeedWaterNeed();
         this.matureWaterNeed = plant.getMatureWaterNeed();
+
+        this.plantImage = plant.getPlantImage();
     }
 
     public Plant mapToPlant() {
