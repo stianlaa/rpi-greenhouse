@@ -1,7 +1,8 @@
 package com.rpigreenhouse.controller;
 
-import com.rpigreenhouse.exceptions.InvalidRequestException;
 import com.rpigreenhouse.exceptions.PlantNotFoundException;
+import com.rpigreenhouse.exceptions.TrayNotFoundException;
+import com.rpigreenhouse.greenhouse.Tray;
 import com.rpigreenhouse.plants.BasilPlant;
 import com.rpigreenhouse.plants.Plant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
@@ -55,7 +56,6 @@ public class PlantController {
     public PlantTo getPlantById(@PathVariable String plantid) {
         debugLog(String.format("received request for plant: %s", plantid));
 
-        if (plantid.trim().isEmpty()) throw new InvalidRequestException("The request contained no id");
         return new PlantTo(greenhouseStorage.getPlant(plantid)
                 .orElseThrow(PlantNotFoundException::new));
     }
@@ -63,7 +63,26 @@ public class PlantController {
     @CrossOrigin
     @PostMapping("addplant")
     public void addPlant() {
-        greenhouseStorage.addPlant(new BasilPlant(2));
+        greenhouseStorage.addPlant(new BasilPlant(2)); // todo adapt to be able to create various plants
         debugLog("received request to add new plant");
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "getplantidsfortray/{trayid}")
+    public List<String> getPlantIdsForTray(@PathVariable Integer trayid) {
+        debugLog(String.format("received request for plantids for tray: %s", trayid));
+        Tray specifiedTray = greenhouseStorage.getTraysWithPlants().stream()
+                .filter(tray -> trayid.equals(tray.getTrayId())).findFirst()
+                .orElseThrow(TrayNotFoundException::new);
+        return specifiedTray.getPlants().stream().map(Plant::getPlantId).collect(Collectors.toList());
+    }
+
+    @CrossOrigin
+    @GetMapping(value = "getplantimage/{plantid}")
+    public byte[] getPlantImageById(@PathVariable String plantid) {
+        debugLog(String.format("received request for images of plants in plant: %s", plantid));
+        Plant specifiedPlant = greenhouseStorage.getPlant(plantid)
+                .orElseThrow(PlantNotFoundException::new);
+        return specifiedPlant.getPlantImage();
     }
 }
