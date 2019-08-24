@@ -83,6 +83,6 @@ public class PlantController {
         debugLog(String.format("received request for images of plants in plant: %s", plantid));
         Plant specifiedPlant = greenhouseStorage.getPlant(plantid)
                 .orElseThrow(PlantNotFoundException::new);
-        return specifiedPlant.getPlantImage();
+        return specifiedPlant.getPlantTypeImage();
     }
 }

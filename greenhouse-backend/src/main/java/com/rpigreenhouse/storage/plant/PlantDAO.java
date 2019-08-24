@@ -2,6 +2,7 @@ package com.rpigreenhouse.storage.plant;
 
 import com.rpigreenhouse.plants.Plant;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 
 @Data
+@NoArgsConstructor
 @Entity(name = "PLANT_TABLE")
 public class PlantDAO {
 
@@ -27,19 +29,12 @@ public class PlantDAO {
     private Integer seedWaterNeed;
     private Integer matureWaterNeed;
 
-    @Lob
-    @Column(name="PLANT_IMAGE", nullable=false, columnDefinition="mediumblob")
-    private byte[] plantImage;
-
-
-    public PlantDAO() {
-        super();
-    }
+    @Transient
+    private byte[] plantTypeImage;
 
     public PlantDAO(Plant plant) {
         this.plantId = plant.getPlantId();
         this.trayId = plant.getTrayId();
-
         this.plantType = plant.getPlantType();
         this.plantedDateTime = plant.getPlantedDateTime();
         this.expectedHarvestDate = plant.getExpectedHarvestDate();
@@ -47,8 +42,6 @@ public class PlantDAO {
         this.idealGrowthMonthsTo = plant.getIdealGrowthMonthsTo();
         this.seedWaterNeed = plant.getSeedWaterNeed();
         this.matureWaterNeed = plant.getMatureWaterNeed();
-
-        this.plantImage = plant.getPlantImage();
     }
 
     public Plant mapToPlant() {
@@ -62,6 +55,12 @@ public class PlantDAO {
                 .idealGrowthMonthsTo(this.getIdealGrowthMonthsTo())
                 .seedWaterNeed(this.seedWaterNeed)
                 .matureWaterNeed(this.matureWaterNeed)
+                .plantTypeImage(this.plantTypeImage)
                 .build();
+    }
+
+    public PlantDAO setPlantTypeImage(byte[] plantTypeImage) {
+        this.plantTypeImage = plantTypeImage;
+        return this;
     }
 }

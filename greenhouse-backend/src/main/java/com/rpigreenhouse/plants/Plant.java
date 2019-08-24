@@ -47,7 +47,7 @@ public class Plant {
     protected Integer seedWaterNeed;
     protected Integer matureWaterNeed;
 
-    protected byte[] plantImage;
+    protected byte[] plantTypeImage;
 
     protected Integer idealTemperature; // todo
     protected Duration idealLightExposure; // todo

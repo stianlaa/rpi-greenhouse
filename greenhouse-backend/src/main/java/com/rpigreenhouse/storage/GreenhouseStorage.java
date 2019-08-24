@@ -4,12 +4,6 @@ import com.rpigreenhouse.greenhouse.Tray;
 import com.rpigreenhouse.plants.Plant;
 import com.rpigreenhouse.storage.plant.PlantService;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
