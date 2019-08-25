@@ -4,10 +4,7 @@ import com.rpigreenhouse.greenhouse.Tray;
 import com.rpigreenhouse.plants.Plant;
 import com.rpigreenhouse.storage.plant.PlantService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GreenhouseStorage {
@@ -51,5 +48,9 @@ public class GreenhouseStorage {
                             .collect(Collectors.toList())));
         }
         return trays;
+    }
+
+    public Map<String, byte[]> getAllPlantTypeImages() {
+        return plantService.getAllPlantTypeImages();
     }
 }

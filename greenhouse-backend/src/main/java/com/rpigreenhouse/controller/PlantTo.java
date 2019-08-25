@@ -19,7 +19,6 @@ public class PlantTo {
     private Integer seedWaterNeed;
     private Integer matureWaterNeed;
     private Float maturityPercentage;
-    private byte[] plantTypeImage;
 
     public PlantTo(Plant plant) {
         this.trayId = plant.getTrayId();
@@ -31,6 +30,5 @@ public class PlantTo {
         this.seedWaterNeed = plant.getSeedWaterNeed();
         this.matureWaterNeed = plant.getMatureWaterNeed();
         this.maturityPercentage = plant.getMaturityPercentage();
-        this.plantTypeImage = plant.getPlantTypeImage();
     }
 }

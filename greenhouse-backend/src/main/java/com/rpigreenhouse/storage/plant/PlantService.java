@@ -48,6 +48,12 @@ public class PlantService {
         }
     }
 
+    public Map<String, byte[]> getAllPlantTypeImages() {
+        Map<String, byte[]> storedPlantTypeImages = new HashMap<>();
+        plantImageRepository.findAll().forEach(stored -> storedPlantTypeImages.put(stored.getPlantType(), stored.getPlantTypeImage()));
+        return storedPlantTypeImages;
+    }
+
     public void saveOrUpdatePlant(Plant plant) {
         plantRepository.save(new PlantDAO(plant));
         plantImageRepository.save(new PlantTypeImageDAO(plant));

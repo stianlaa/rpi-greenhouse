@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -78,11 +79,9 @@ public class PlantController {
     }
 
     @CrossOrigin
-    @GetMapping(value = "getplantimage/{plantid}")
-    public byte[] getPlantImageById(@PathVariable String plantid) {
-        debugLog(String.format("received request for images of plants in plant: %s", plantid));
-        Plant specifiedPlant = greenhouseStorage.getPlant(plantid)
-                .orElseThrow(PlantNotFoundException::new);
-        return specifiedPlant.getPlantTypeImage();
+    @GetMapping(value = "getplanttypeimages")
+    public Map<String, byte[]> getPlantTypeImages() {
+        debugLog("received request for plant type images");
+        return greenhouseStorage.getAllPlantTypeImages();
     }
 }
