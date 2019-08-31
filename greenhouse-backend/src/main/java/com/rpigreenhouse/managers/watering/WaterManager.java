@@ -1,6 +1,5 @@
 package com.rpigreenhouse.managers.watering;
 
-import com.rpigreenhouse.gpio.GpioControllerSingleton;
 import com.rpigreenhouse.greenhouse.Tray;
 import com.rpigreenhouse.plants.Plant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
@@ -17,18 +16,17 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static com.rpigreenhouse.GreenhouseLogger.*;
+import static com.rpigreenhouse.GreenhouseLogger.debugLog;
+import static com.rpigreenhouse.GreenhouseLogger.warnLog;
 
 @Component
 public class WaterManager {
 
-    private PumpRegulator pumpRegulator;
-    private ValveRegulator valveRegulator;
+    private Dispenser dispenser;
     private GreenhouseStorage greenhouseStorage;
 
     private ScheduledFuture<?> wateringSchedule = null;
     private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-    private GpioControllerSingleton gpioControllerSingleton;
 
     private Map<Integer, Integer> trayWaterOrders = new TreeMap<>();
 
@@ -36,13 +34,9 @@ public class WaterManager {
     private Boolean busyStatus = false;
 
     public WaterManager(GreenhouseStorage greenhouseStorage,
-                        PumpRegulator pumpRegulator,
-                        ValveRegulator valveRegulator,
-                        GpioControllerSingleton gpioControllerSingleton) {
+                        Dispenser dispenser) {
         this.greenhouseStorage = greenhouseStorage;
-        this.pumpRegulator = pumpRegulator;
-        this.valveRegulator = valveRegulator;
-        this.gpioControllerSingleton = gpioControllerSingleton;
+        this.dispenser = dispenser;
     }
 
     public Long startWaterCheckingSchedule(LocalDateTime firstWatering, Long wateringInterval) {
@@ -95,16 +89,7 @@ public class WaterManager {
     private void processWaterOrders() {
         for (Integer trayId : trayWaterOrders.keySet()) {
             debugLog(String.format("Watering tray: %s, with waterVolume: %d ml", trayId, trayWaterOrders.get(trayId)));
-            while (true) {
-                try {
-                    Boolean trayWateringComplete = giveTrayWater(trayId, trayWaterOrders.get(trayId));
-                    if (trayWateringComplete) break;
-                    TimeUnit.MILLISECONDS.sleep(500L);
-                } catch (InterruptedException e) {
-                    errorLog("Interrupt order received while dispensing water");
-                    gpioControllerSingleton.setAllPinsLow();
-                }
-            }
+            dispenser.giveTrayWater(trayId, trayWaterOrders.get(trayId));
         }
     }
 
@@ -118,16 +103,5 @@ public class WaterManager {
         Float daysPassed = (float) ChronoUnit.DAYS.between(plant.getPlantedDateTime().toLocalDate(), atDate);
         Float matureDuration = (float) ChronoUnit.DAYS.between(plant.getPlantedDateTime().toLocalDate(), plant.getExpectedHarvestDate());
         return Math.round(plant.getSeedWaterNeed() + (plant.getMatureWaterNeed() - plant.getSeedWaterNeed()) * (daysPassed / matureDuration));
-    }
-
-    public Boolean giveTrayWater(Integer trayId, Integer waterVolumeMl) {
-        valveRegulator.selectTray(trayId);
-        try {
-            return pumpRegulator.pumpVolume(waterVolumeMl);
-        } catch (InterruptedException e) {
-            errorLog("interrupt was registered during pumping");
-            gpioControllerSingleton.setAllPinsLow();
-            return false;
-        }
     }
 }

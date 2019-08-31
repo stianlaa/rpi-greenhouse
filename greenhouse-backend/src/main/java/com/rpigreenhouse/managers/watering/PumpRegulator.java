@@ -3,37 +3,21 @@ package com.rpigreenhouse.managers.watering;
 import com.rpigreenhouse.gpio.GpioControllerSingleton;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
-
-import static com.rpigreenhouse.GreenhouseLogger.infoLog;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class PumpRegulator {
-    private static final Integer WAIT_BEFORE_SWITCH = 1;
-    private static final Integer PUMP_PIN_ADDRESS = 0;
+    // Responsible for gathering and offering control of the pumps
+
+    private static final List<Integer> PUMP_PIN_ADDRESS_LIST = Arrays.asList(0, 1);
     private GpioControllerSingleton gpioControllerSingleton;
 
     public PumpRegulator(GpioControllerSingleton gpioControllerSingleton) {
         this.gpioControllerSingleton = gpioControllerSingleton;
     }
 
-    public Boolean pumpVolume(Integer waterVolumeMl) throws InterruptedException {
-
-        Long pumpForDuration = calculatePumpTime(waterVolumeMl);
-
-        infoLog(String.format("Started pumping for %s seconds", pumpForDuration.toString()));
-        gpioControllerSingleton.setPin(PUMP_PIN_ADDRESS, true);
-
-        TimeUnit.SECONDS.sleep(calculatePumpTime(waterVolumeMl));
-
-        gpioControllerSingleton.setPin(PUMP_PIN_ADDRESS, false);
-        infoLog("Stopped pumping");
-
-        TimeUnit.SECONDS.sleep(WAIT_BEFORE_SWITCH);
-        return true;
-    }
-
-    private Long calculatePumpTime(Integer waterVolumeMl) {
-        return (long) (waterVolumeMl / 2); // todo adjust after measurement
+    public void setPumpMode(Boolean pumpState) {
+        PUMP_PIN_ADDRESS_LIST.forEach(pinAddress -> gpioControllerSingleton.setPin(pinAddress, pumpState));
     }
 }

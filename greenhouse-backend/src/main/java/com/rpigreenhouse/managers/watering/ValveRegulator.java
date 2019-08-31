@@ -8,11 +8,12 @@ import java.util.Map;
 
 @Component
 public class ValveRegulator {
+    // responsible for controlling the valves
 
     // key: trayId, value: wiringpi Pin
     private static final Map<Integer, Integer> TRAY_PIN_MAP = new HashMap<Integer, Integer>() {
         {
-            put(1, 1);
+            put(1, 1); // todo determine pins
             put(2, 2);
             put(3, 3);
             put(4, 4);
@@ -25,7 +26,7 @@ public class ValveRegulator {
         this.gpioControllerSingleton = gpioControllerSingleton;
     }
 
-    public void selectTray(Integer trayId) {
+    public void directValveToTray(Integer trayId) {
         // close all other valve exit than that corresponding to trayId
         for (Integer pinAddress : TRAY_PIN_MAP.keySet()) {
             if (pinAddress.equals(TRAY_PIN_MAP.get(trayId))) {
@@ -33,6 +34,12 @@ public class ValveRegulator {
             } else {
                 gpioControllerSingleton.setPin(pinAddress, false);
             }
+        }
+    }
+
+    public void closeAllValves() {
+        for (Integer pinAddress : TRAY_PIN_MAP.keySet()) {
+            gpioControllerSingleton.setPin(pinAddress, false);
         }
     }
 }
