@@ -1,7 +1,6 @@
 package com.rpigreenhouse.managers.watering;
 
-import com.rpigreenhouse.gpio.GpioControllerSingleton;
-import com.rpigreenhouse.measurements.DispenserVolumeSensor;
+import com.rpigreenhouse.managers.sensor.DispenserVolumeSensor;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -13,16 +12,13 @@ public class Dispenser {
     private PumpRegulator pumpRegulator;
     private ValveRegulator valveRegulator;
     private DispenserVolumeSensor dispenserVolumeSensor;
-    private GpioControllerSingleton gpioControllerSingleton;
 
     public Dispenser(PumpRegulator pumpRegulator,
                      ValveRegulator valveRegulator,
-                     DispenserVolumeSensor dispenserVolumeSensor,
-                     GpioControllerSingleton gpioControllerSingleton) {
+                     DispenserVolumeSensor dispenserVolumeSensor) {
         this.pumpRegulator = pumpRegulator;
         this.valveRegulator = valveRegulator;
         this.dispenserVolumeSensor = dispenserVolumeSensor;
-        this.gpioControllerSingleton = gpioControllerSingleton;
     }
 
     public void giveTrayWater(Integer trayId, Integer waterVolumeMl) {
@@ -35,23 +31,22 @@ public class Dispenser {
             valveRegulator.closeAllValves();
 
         } catch (InterruptedException e) {
-            gpioControllerSingleton.setAllPinsLow();
             e.printStackTrace();
         }
     }
 
     public void fillToVolume(Double targetVolume) throws InterruptedException {
         pumpRegulator.setPumpMode(true);
-        while (dispenserVolumeSensor.sample() < targetVolume) {
+        while (dispenserVolumeSensor.getStateEstimate() < targetVolume) {
             TimeUnit.MILLISECONDS.sleep(50L);
         }
         pumpRegulator.setPumpMode(false);
     }
 
     private void dispenseVolumeToTray(Integer trayId, Integer waterVolumeMl) throws InterruptedException {
-        Double startingVolume = dispenserVolumeSensor.sample();
+        Float startingVolume = dispenserVolumeSensor.getStateEstimate();
         valveRegulator.directValveToTray(trayId);
-        while (startingVolume - dispenserVolumeSensor.sample() < waterVolumeMl) {
+        while (startingVolume - dispenserVolumeSensor.getStateEstimate() < waterVolumeMl) {
             TimeUnit.MILLISECONDS.sleep(50L);
         }
     }

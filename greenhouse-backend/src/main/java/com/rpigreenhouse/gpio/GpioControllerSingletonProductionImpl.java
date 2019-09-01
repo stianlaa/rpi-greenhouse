@@ -1,25 +1,26 @@
 package com.rpigreenhouse.gpio;
 
 import com.pi4j.io.gpio.*;
-import com.rpigreenhouse.exceptions.UnexpectedPinUseException;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-import static com.rpigreenhouse.GreenhouseLogger.*;
+import static com.rpigreenhouse.GreenhouseLogger.debugLog;
+import static com.rpigreenhouse.GreenhouseLogger.infoLog;
 
 @Component
 @Profile("prod")
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class GpioControllerSingletonProductionImpl implements GpioControllerSingleton {
 
-    private final static List<Integer> FUNCTIONAL_PINS = new ArrayList<>(Arrays.asList(0, 2)); // todo add more as needed
     private final GpioController gpio;
-    private final Map<Integer, GpioPinDigitalOutput> provisionedPins = new HashMap<>();
+    private final Map<Integer, GpioPinDigitalOutput> provisionedOutPins = new HashMap<>();
+    private final Map<Integer, GpioPinDigitalInput> provisionedInPins = new HashMap<>();
 
     public GpioControllerSingletonProductionImpl() {
         this.gpio = GpioFactory.getInstance();
@@ -31,31 +32,32 @@ public class GpioControllerSingletonProductionImpl implements GpioControllerSing
     }
 
     @Override
-    public void setPin(int address, Boolean state) {
-        if (!FUNCTIONAL_PINS.contains(address)) {
-            errorLog(String.format("Put the pin %d to state %b", address, state));
-            throw new UnexpectedPinUseException(address);
-        }
-
-        if (!provisionedPins.containsKey(address)) {
+    public void setPin(OutputPin pin, Boolean state) {
+        Integer address = pin.addr();
+        if (!provisionedOutPins.containsKey(address)) {
             Pin pinToProvision = RaspiPin.getPinByAddress(address);
             provisionDigitalOutputPin(pinToProvision);
         }
 
         debugLog(String.format("Setting pin: %d state to %b", address, state));
-        provisionedPins.get(address).setState(state);
+        provisionedOutPins.get(address).setState(state);
     }
 
     @Override
-    public Boolean getPinState(int address) {
-        return false; // todo implemented when needed
+    public Boolean getPinState(InputPin pin) {
+        Integer address = pin.addr();
+        if (!provisionedInPins.containsKey(address)) {
+            Pin pinToProvision = RaspiPin.getPinByAddress(address);
+            provisionDigitalInputPin(pinToProvision);
+        }
+        return provisionedInPins.get(address).getState().isHigh();
     }
 
     @Override
     public void setAllPinsLow() {
         infoLog("Setting all pins low");
-        for (Integer pinAddress : provisionedPins.keySet()) {
-            provisionedPins.get(pinAddress).setState(false);
+        for (Integer pinAddress : provisionedOutPins.keySet()) {
+            provisionedOutPins.get(pinAddress).setState(false);
         }
     }
 
@@ -63,6 +65,11 @@ public class GpioControllerSingletonProductionImpl implements GpioControllerSing
         final GpioPinDigitalOutput provisionedPin = gpio.provisionDigitalOutputPin(pinToProvision, pinToProvision.getName(), PinState.LOW);
         provisionedPin.setShutdownOptions(true, PinState.LOW);
 
-        this.provisionedPins.put(pinToProvision.getAddress(), provisionedPin);
+        this.provisionedOutPins.put(pinToProvision.getAddress(), provisionedPin);
+    }
+
+    private void provisionDigitalInputPin(Pin pinToProvision) {
+        final GpioPinDigitalInput provisionedPin = gpio.provisionDigitalInputPin(pinToProvision);
+        this.provisionedInPins.put(pinToProvision.getAddress(), provisionedPin);
     }
 }
