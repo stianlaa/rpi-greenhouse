@@ -1,22 +1,23 @@
 package com.rpigreenhouse.managers.watering;
 
 import com.rpigreenhouse.gpio.GpioControllerSingleton;
+import com.rpigreenhouse.gpio.OutputPin;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.rpigreenhouse.gpio.OutputPin.*;
+
 @Component
 public class ValveRegulator {
-    // responsible for controlling the valves
 
-    // key: trayId, value: wiringpi Pin
-    private static final Map<Integer, Integer> TRAY_PIN_MAP = new HashMap<Integer, Integer>() {
+    private static final Map<Integer, OutputPin> TRAY_PIN_MAP = new HashMap<Integer, OutputPin>() {
         {
-            put(1, 1); // todo determine pins
-            put(2, 2);
-            put(3, 3);
-            put(4, 4);
+            put(1, PIN_VALVE_A_1);
+            put(2, PIN_VALVE_A_2);
+            put(3, PIN_VALVE_A_3);
+            put(4, PIN_VALVE_A_4);
         }
     };
 
@@ -27,19 +28,19 @@ public class ValveRegulator {
     }
 
     public void directValveToTray(Integer trayId) {
-        // close all other valve exit than that corresponding to trayId
-        for (Integer pinAddress : TRAY_PIN_MAP.keySet()) {
-            if (pinAddress.equals(TRAY_PIN_MAP.get(trayId))) {
-                gpioControllerSingleton.setPin(pinAddress, true);
+        // close all other valve exits than that corresponding to trayId
+        for (Integer trayKey : TRAY_PIN_MAP.keySet()) {
+            if (trayKey.equals(trayId)) {
+                gpioControllerSingleton.setPin(TRAY_PIN_MAP.get(trayId), true);
             } else {
-                gpioControllerSingleton.setPin(pinAddress, false);
+                gpioControllerSingleton.setPin(TRAY_PIN_MAP.get(trayId), false);
             }
         }
     }
 
     public void closeAllValves() {
-        for (Integer pinAddress : TRAY_PIN_MAP.keySet()) {
-            gpioControllerSingleton.setPin(pinAddress, false);
+        for (Integer trayKey : TRAY_PIN_MAP.keySet()) {
+            gpioControllerSingleton.setPin(TRAY_PIN_MAP.get(trayKey), true);
         }
     }
 }

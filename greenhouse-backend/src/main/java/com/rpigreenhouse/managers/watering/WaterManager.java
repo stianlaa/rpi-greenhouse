@@ -39,6 +39,10 @@ public class WaterManager {
         this.dispenser = dispenser;
     }
 
+    public void giveTrayWater(Integer trayId, Integer waterVolumeMl) {
+        dispenser.giveTrayWater(trayId, waterVolumeMl);
+    }
+
     public Long startWaterCheckingSchedule(LocalDateTime firstWatering, Long wateringInterval) {
         if (wateringSchedule == null) {
             wateringSchedule = service.scheduleAtFixedRate(this::waterAllPlants,
