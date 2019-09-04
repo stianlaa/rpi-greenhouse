@@ -49,10 +49,6 @@ public class Plant {
 
     protected byte[] plantTypeImage;
 
-    protected Integer idealTemperature; // todo
-    protected Duration idealLightExposure; // todo
-
-
     public Plant(int trayId) {
         this.plantId = UUID.randomUUID().toString();
         this.trayId = trayId;

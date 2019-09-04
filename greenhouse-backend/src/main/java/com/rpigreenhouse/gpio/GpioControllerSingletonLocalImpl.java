@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import static com.rpigreenhouse.GreenhouseLogger.infoLog;
 
@@ -15,6 +16,8 @@ import static com.rpigreenhouse.GreenhouseLogger.infoLog;
 @Profile("local")
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class GpioControllerSingletonLocalImpl implements GpioControllerSingleton {
+
+    private Random random = new Random();
 
     private final Map<Integer, Boolean> provisionedPins = new HashMap<>();
 
@@ -29,13 +32,12 @@ public class GpioControllerSingletonLocalImpl implements GpioControllerSingleton
     @Override
     public void setPin(OutputPin pin, Boolean state) {
         Integer address = pin.addr();
-        infoLog(String.format("Local test without hardware: put the pin %d to state %b", address, state));
         provisionedPins.put(address, state);
     }
 
     @Override
     public Boolean getPinState(InputPin pin) {
-        return provisionedPins.get(pin.addr());
+        return random.nextBoolean();
     }
 
     @Override

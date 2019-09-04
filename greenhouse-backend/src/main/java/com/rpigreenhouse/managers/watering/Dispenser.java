@@ -44,7 +44,7 @@ public class Dispenser {
     }
 
     private void dispenseVolumeToTray(Integer trayId, Integer waterVolumeMl) throws InterruptedException {
-        Float startingVolume = dispenserVolumeSensor.getStateEstimate();
+        Double startingVolume = dispenserVolumeSensor.getStateEstimate();
         valveRegulator.directValveToTray(trayId);
         while (startingVolume - dispenserVolumeSensor.getStateEstimate() < waterVolumeMl) {
             TimeUnit.MILLISECONDS.sleep(50L);

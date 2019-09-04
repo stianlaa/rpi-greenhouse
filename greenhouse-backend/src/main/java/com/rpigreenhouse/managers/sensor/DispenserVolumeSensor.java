@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Deque;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
 import static com.rpigreenhouse.GreenhouseLogger.warnLog;
@@ -20,12 +21,12 @@ import static com.rpigreenhouse.gpio.OutputPin.PIN_VOLUME_SENSOR_TRIG;
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class DispenserVolumeSensor implements Sensor {
 
-    private static final Float SPEED_OF_SOUND = 343.6f;
-    private static final Long TIMEOUT_NANOS = 10000L;
+    private static final Double SPEED_OF_SOUND = 343.6;
+    private static final Long TIMEOUT_NANOS = 100000L;
     private static final Integer N = 10;
 
     private GpioControllerSingleton gpioControllerSingleton;
-    private Deque<Float> rangeMeasurements = new LinkedList<>();
+    private Queue<Double> rangeMeasurements = new LinkedList<>();
 
     public DispenserVolumeSensor(GpioControllerSingleton gpioControllerSingleton) {
         this.gpioControllerSingleton = gpioControllerSingleton;
@@ -35,17 +36,22 @@ public class DispenserVolumeSensor implements Sensor {
     public void updateStateEstimate() {
         rangeMeasurements.add(singleMeasurement());
         if (rangeMeasurements.size() > N) {
-            rangeMeasurements.pop();
+            rangeMeasurements.poll();
         }
     }
 
     @Override
-    public Float getStateEstimate() {
-        return median((Float[]) rangeMeasurements.toArray());
+    public Double getStateEstimate() {
+        List<Double> temp = new ArrayList<>();
+        for (Double measurement : rangeMeasurements) {
+            System.out.println(measurement);
+            temp.add(measurement);
+        }
+        return median(temp);
     }
 
-    public Float singleMeasurement() {
-        Float result = listenToEcho();
+    public Double singleMeasurement() {
+        Double result = listenToEcho();
         if (result == null) {
             warnLog("Timed out");
         }
@@ -65,37 +71,36 @@ public class DispenserVolumeSensor implements Sensor {
         }
     }
 
-    public Float listenToEcho() {
-        LocalDateTime timeout = LocalDateTime.now().plusNanos(TIMEOUT_NANOS);
+    public Double listenToEcho() {
         LocalDateTime pulseStart = null;
         LocalDateTime pulseEnd = null;
         emit();
-        while (!gpioControllerSingleton.getPinState(PIN_VOLUME_SENSOR_ECHO) &&
-                LocalDateTime.now().isBefore(timeout)) {
+        LocalDateTime timeout = LocalDateTime.now().plusNanos(TIMEOUT_NANOS);
+        do {
             pulseStart = LocalDateTime.now();
-        }
-        while (gpioControllerSingleton.getPinState(PIN_VOLUME_SENSOR_ECHO) &&
-                LocalDateTime.now().isBefore(timeout)) {
-            pulseEnd = LocalDateTime.now();
-        }
+        } while (!gpioControllerSingleton.getPinState(PIN_VOLUME_SENSOR_ECHO) &&
+                LocalDateTime.now().isBefore(timeout));
 
-        if (LocalDateTime.now().isBefore(timeout)
-                && pulseEnd != null
-                && pulseStart != null) {
-            return ((float) ChronoUnit.NANOS.between(pulseEnd, pulseStart)) * SPEED_OF_SOUND / 2;
+        do {
+            pulseEnd = LocalDateTime.now();
+        } while (gpioControllerSingleton.getPinState(PIN_VOLUME_SENSOR_ECHO) &&
+                LocalDateTime.now().isBefore(timeout));
+
+        if (LocalDateTime.now().isBefore(timeout)) {
+            return ((double) ChronoUnit.NANOS.between(pulseEnd, pulseStart)) * SPEED_OF_SOUND / 2;
         } else {
             return null;
         }
     }
 
-    public Float median(Float[] values) {
-        Arrays.sort(values);
-        int totalElements = values.length;
+    public Double median(List<Double> values) {
+        values.sort(Double::compareTo);
+        int totalElements = values.size();
         if (totalElements % 2 == 0) {
-            Float sumOfMiddleElements = values[totalElements / 2] + values[totalElements / 2 - 1];
+            Double sumOfMiddleElements = values.get(totalElements / 2) + values.get(totalElements / 2 - 1);
             return (sumOfMiddleElements) / 2;
         } else {
-            return values[values.length / 2];
+            return values.get(values.size() / 2);
         }
     }
 }

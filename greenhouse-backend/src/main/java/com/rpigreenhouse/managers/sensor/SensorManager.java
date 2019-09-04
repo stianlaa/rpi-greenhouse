@@ -3,6 +3,7 @@ package com.rpigreenhouse.managers.sensor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -19,7 +20,7 @@ public class SensorManager {
     @Autowired
     private List<Sensor> sensors;
 
-    private Map<String, ScheduledFuture<?>> sensorSchedules = null;
+    private Map<String, ScheduledFuture<?>> sensorSchedules = new HashMap<>();
     private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     public SensorManager() {
