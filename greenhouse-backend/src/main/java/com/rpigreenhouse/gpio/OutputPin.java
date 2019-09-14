@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum OutputPin {
-    PIN_VOLUME_SENSOR_TRIG(1),
-    PIN_VALVE_A_1(2),
-    PIN_VALVE_A_2(3),
-    PIN_VALVE_A_3(4),
-    PIN_VALVE_A_4(5),
-    PIN_PUMP_1(6),
-    PIN_PUMP_2(7);
+    PIN_VOLUME_SENSOR_TRIG(29),
+    PIN_VALVE_A_1(11),
+    PIN_VALVE_A_2(13),
+    PIN_VALVE_A_3(15),
+    PIN_VALVE_A_4(7), // todo probably have to change
+    PIN_PUMP_1(16),
+    PIN_PUMP_2(18);
 
     private Integer pinAddress;
 

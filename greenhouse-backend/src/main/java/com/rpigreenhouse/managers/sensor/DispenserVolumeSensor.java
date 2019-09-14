@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 
-import static com.rpigreenhouse.GreenhouseLogger.warnLog;
+import static com.rpigreenhouse.GreenhouseLogger.debugLog;
 import static com.rpigreenhouse.gpio.InputPin.PIN_VOLUME_SENSOR_ECHO;
 import static com.rpigreenhouse.gpio.OutputPin.PIN_VOLUME_SENSOR_TRIG;
 
@@ -53,7 +53,7 @@ public class DispenserVolumeSensor implements Sensor {
     public Double singleMeasurement() {
         Double result = listenToEcho();
         if (result == null) {
-            warnLog("Timed out");
+            debugLog("Timed out");
         }
         return result;
     }
