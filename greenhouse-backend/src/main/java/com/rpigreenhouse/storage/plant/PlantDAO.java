@@ -29,9 +29,6 @@ public class PlantDAO {
     private Integer seedWaterNeed;
     private Integer matureWaterNeed;
 
-    @Transient
-    private byte[] plantTypeImage;
-
     public PlantDAO(Plant plant) {
         this.plantId = plant.getPlantId();
         this.trayId = plant.getTrayId();
@@ -55,12 +52,6 @@ public class PlantDAO {
                 .idealGrowthMonthsTo(this.getIdealGrowthMonthsTo())
                 .seedWaterNeed(this.seedWaterNeed)
                 .matureWaterNeed(this.matureWaterNeed)
-                .plantTypeImage(this.plantTypeImage)
                 .build();
-    }
-
-    public PlantDAO setPlantTypeImage(byte[] plantTypeImage) {
-        this.plantTypeImage = plantTypeImage;
-        return this;
     }
 }

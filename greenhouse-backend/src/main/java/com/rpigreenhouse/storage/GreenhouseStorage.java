@@ -49,8 +49,4 @@ public class GreenhouseStorage {
         }
         return trays;
     }
-
-    public Map<String, byte[]> getAllPlantTypeImages() {
-        return plantService.getAllPlantTypeImages();
-    }
 }

@@ -17,6 +17,5 @@ public class TomatoPlant extends Plant {
         this.expectedHarvestDate = LocalDate.now().plusDays(DAYS_TO_HARVEST);
         this.seedWaterNeed = SEED_WATER_NEED;
         this.matureWaterNeed = MATURE_WATER_NEED;
-        this.plantTypeImage = extractBytes(this.plantType + ".jpg"     );
     }
 }
