@@ -1,6 +1,7 @@
 package com.rpigreenhouse.controller;
 
 import com.rpigreenhouse.exceptions.WaterManagerBusyException;
+import com.rpigreenhouse.managers.watering.PumpRegulator;
 import com.rpigreenhouse.managers.watering.WaterManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +15,15 @@ import static com.rpigreenhouse.GreenhouseLogger.errorLog;
 @RequestMapping("rest/watering/")
 public class WateringController {
 
+    public Boolean pumpmode = false;
     private WaterManager waterManager;
+    private PumpRegulator pumpRegulator;
 
     @Autowired
-    public WateringController(WaterManager waterManager) {
+    public WateringController(WaterManager waterManager,
+                              PumpRegulator pumpRegulator) {
         this.waterManager = waterManager;
+        this.pumpRegulator = pumpRegulator;
     }
 
     @CrossOrigin
@@ -50,4 +55,12 @@ public class WateringController {
             waterManager.giveTrayWater(trayid, mlvolume);
         }
     }
+
+    @CrossOrigin
+    @GetMapping("togglepump")
+    public void togglePumps() { // todo temporary
+        pumpRegulator.setPumpMode(pumpmode);
+        this.pumpmode = !pumpmode;
+    }
+
 }

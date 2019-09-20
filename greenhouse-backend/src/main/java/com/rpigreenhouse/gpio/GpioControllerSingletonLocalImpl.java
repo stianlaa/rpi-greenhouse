@@ -46,6 +46,5 @@ public class GpioControllerSingletonLocalImpl implements GpioControllerSingleton
         for (Integer pinAddress : provisionedPins.keySet()) {
             provisionedPins.put(pinAddress, false);
         }
-        System.out.println(provisionedPins);
     }
 }

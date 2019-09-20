@@ -11,7 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static com.rpigreenhouse.GreenhouseLogger.debugLog;
+import static com.rpigreenhouse.GreenhouseLogger.infoLog;
 import static java.lang.String.format;
 
 @Component
@@ -23,9 +23,6 @@ public class SensorManager {
     private Map<String, ScheduledFuture<?>> sensorSchedules = new HashMap<>();
     private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
-    public SensorManager() {
-    }
-
     public void startSensorScedules(Long updateInterval) {
         for (Sensor sensor : sensors) {
             String sensorName = sensor.getClass().getCanonicalName();
@@ -33,7 +30,7 @@ public class SensorManager {
                     updateInterval,
                     updateInterval,
                     TimeUnit.MICROSECONDS));
-            debugLog(format("Sensorschedule %s was started", sensorName));
+            infoLog(format("Sensorschedule %s was started", sensorName));
         }
     }
 }

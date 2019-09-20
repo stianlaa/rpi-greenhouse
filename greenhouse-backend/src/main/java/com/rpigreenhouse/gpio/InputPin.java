@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum InputPin {
-    PIN_VOLUME_SENSOR_ECHO(31);
+    PIN_VOLUME_SENSOR_ECHO(22); // physical pin: 31
 
     private Integer pinAddress;
 

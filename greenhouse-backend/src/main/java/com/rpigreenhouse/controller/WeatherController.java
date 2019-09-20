@@ -36,8 +36,14 @@ public class WeatherController {
     @CrossOrigin
     @RequestMapping(value = "getdistance", method = RequestMethod.GET, produces = "application/json")
     public Double getDistanceEstimate() {
-        Double distance = dispenserVolumeSensor.getStateEstimate();
-        return distance;
+        return dispenserVolumeSensor.getStateEstimate();
+    }
+
+    @CrossOrigin
+    @RequestMapping(value = "singlemeasurement", method = RequestMethod.GET, produces = "application/json")
+    public Double getSingleMeasurement() {
+        dispenserVolumeSensor.updateStateEstimate();
+        return dispenserVolumeSensor.getStateEstimate();
     }
 
 }
