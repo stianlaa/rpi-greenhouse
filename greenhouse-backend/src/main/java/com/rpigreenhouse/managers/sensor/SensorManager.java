@@ -23,12 +23,12 @@ public class SensorManager {
     private Map<String, ScheduledFuture<?>> sensorSchedules = new HashMap<>();
     private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
-    public void startSensorScedules(Long updateInterval) {
+    public void startSensorScedules() {
         for (Sensor sensor : sensors) {
             String sensorName = sensor.getClass().getCanonicalName();
             sensorSchedules.put(sensorName, service.scheduleAtFixedRate(sensor::updateStateEstimate,
-                    updateInterval,
-                    updateInterval,
+                    sensor.getRefreshInterval(),
+                    sensor.getRefreshInterval(),
                     TimeUnit.MICROSECONDS));
             infoLog(format("Sensorschedule %s was started", sensorName));
         }

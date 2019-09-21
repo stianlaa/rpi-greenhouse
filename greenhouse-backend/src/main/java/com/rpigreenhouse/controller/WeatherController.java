@@ -2,11 +2,9 @@ package com.rpigreenhouse.controller;
 
 import com.rpigreenhouse.consumer.WeatherConsumer;
 import com.rpigreenhouse.consumer.WeatherStatus;
-import com.rpigreenhouse.managers.sensor.DispenserVolumeSensor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.rpigreenhouse.managers.sensor.DispenserLevelSensor;
+import com.rpigreenhouse.managers.watering.WaterManager;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -14,17 +12,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class WeatherController {
 
     private WeatherConsumer weatherConsumer;
-
-    private DispenserVolumeSensor dispenserVolumeSensor;
+    private DispenserLevelSensor dispenserLevelSensor;
+    private WaterManager waterManager;
 
     public WeatherController(WeatherConsumer weatherConsumer,
-                             DispenserVolumeSensor dispenserVolumeSensor) {
+                             DispenserLevelSensor dispenserLevelSensor,
+                             WaterManager waterManager
+    ) {
         this.weatherConsumer = weatherConsumer;
-        this.dispenserVolumeSensor = dispenserVolumeSensor;
+        this.dispenserLevelSensor = dispenserLevelSensor;
+        this.waterManager = waterManager;
     }
 
     @CrossOrigin
-    @RequestMapping(value = "getweather", method = RequestMethod.GET, produces = "application/json")
+    @GetMapping(value = "getweather", produces = "application/json")
     public WeatherStatus getCurrentWeather() {
         return WeatherStatus.builder().temperature(5.0).humidity(2.0).cloudiness(4.5).build(); // todo remove when frequent testing is complete, and setup cache system
     }
@@ -34,16 +35,27 @@ public class WeatherController {
     //    }
 
     @CrossOrigin
-    @RequestMapping(value = "getdistance", method = RequestMethod.GET, produces = "application/json")
+    @GetMapping(value = "getdistance", produces = "application/json")
     public Double getDistanceEstimate() {
-        return dispenserVolumeSensor.getStateEstimate();
+        return dispenserLevelSensor.getStateEstimate();
     }
 
     @CrossOrigin
-    @RequestMapping(value = "singlemeasurement", method = RequestMethod.GET, produces = "application/json")
+    @GetMapping(value = "singlemeasurement", produces = "application/json")
     public Double getSingleMeasurement() {
-        dispenserVolumeSensor.updateStateEstimate();
-        return dispenserVolumeSensor.getStateEstimate();
+        dispenserLevelSensor.updateStateEstimate();
+        return dispenserLevelSensor.getStateEstimate();
     }
+
+    @CrossOrigin
+    @GetMapping(value = "filldispenser")
+    public void fillDispenserToVolume() {
+
+        // Expected behaviour here is for the fillToTargetVolume() method to fill up to target volume,
+        // and then loop at the dispenseVolumeToTray() method
+
+        waterManager.giveTrayWater(1, 150);
+    }
+
 
 }

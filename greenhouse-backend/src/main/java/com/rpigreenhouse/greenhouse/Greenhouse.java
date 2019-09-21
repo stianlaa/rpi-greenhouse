@@ -40,7 +40,7 @@ public class Greenhouse {
 
 //        if (firstWatering != null && wateringInterval != null)
 //            waterManager.startWaterCheckingSchedule(firstWatering, wateringInterval);
-        sensorManager.startSensorScedules(1000000L);
+        sensorManager.startSensorScedules();
     }
 
     private void addStartupMockData() {

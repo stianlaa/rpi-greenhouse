@@ -4,4 +4,6 @@ public interface Sensor {
     public void updateStateEstimate();
 
     public Double getStateEstimate();
+
+    public Long getRefreshInterval();
 }

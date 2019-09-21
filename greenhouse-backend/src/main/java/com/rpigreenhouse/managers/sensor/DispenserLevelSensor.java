@@ -14,7 +14,10 @@ import static java.lang.String.format;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class DispenserVolumeSensor implements Sensor {
+public class DispenserLevelSensor implements Sensor {
+
+
+    private static final Long REFRESH_INTERVAL = 1000_000L; // Micros
 
     private static final Long TIMEOUT_NANOS = 1000_0000L; // 0.01 seconds ~ 3.4m distance sound travel
     private static final Double SPEED_OF_SOUND = 343.6;
@@ -23,7 +26,7 @@ public class DispenserVolumeSensor implements Sensor {
     private GpioControllerSingleton gpioControllerSingleton;
     private Queue<Double> rangeMeasurements = new LinkedList<>();
 
-    public DispenserVolumeSensor(GpioControllerSingleton gpioControllerSingleton) {
+    public DispenserLevelSensor(GpioControllerSingleton gpioControllerSingleton) {
         this.gpioControllerSingleton = gpioControllerSingleton;
     }
 
@@ -39,12 +42,12 @@ public class DispenserVolumeSensor implements Sensor {
 
     @Override
     public Double getStateEstimate() {
-        if (rangeMeasurements.size() > 0) {
-            List<Double> temp = new ArrayList<>(rangeMeasurements);
-            return median(temp);
-        } else {
+        if (rangeMeasurements.isEmpty())  {
             warnLog("Couldn't return stateestimate, since measurement list was empty");
             return null;
+        } else {
+            List<Double> temp = new ArrayList<>(rangeMeasurements);
+            return median(temp);
         }
     }
 
@@ -95,7 +98,7 @@ public class DispenserVolumeSensor implements Sensor {
         return Optional.empty();
     }
 
-    private Boolean hasNotTimedOut(Long start) {
+    private boolean hasNotTimedOut(Long start) {
         return ((System.nanoTime() - start) < TIMEOUT_NANOS);
     }
 
@@ -115,5 +118,9 @@ public class DispenserVolumeSensor implements Sensor {
         while (waitUntil > System.nanoTime()) {
             ;
         }
+    }
+
+    public Long getRefreshInterval() {
+        return REFRESH_INTERVAL;
     }
 }

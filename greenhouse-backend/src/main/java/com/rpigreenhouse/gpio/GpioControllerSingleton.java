@@ -5,5 +5,5 @@ public interface GpioControllerSingleton {
 
     public void setAllPinsLow();
 
-    public Boolean getPinState(InputPin pin);
+    public boolean getPinState(InputPin pin);
 }

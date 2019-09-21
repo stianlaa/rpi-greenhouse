@@ -13,4 +13,5 @@ public class RpiGreenhouseApplicationTests {
 	public void contextLoads() {
 	}
 
+	// todo Write unit mappertest for weatherdata
 }

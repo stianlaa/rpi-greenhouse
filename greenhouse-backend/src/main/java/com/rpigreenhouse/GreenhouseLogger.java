@@ -5,6 +5,11 @@ import org.slf4j.LoggerFactory;
 
 
 public class GreenhouseLogger {
+
+    private GreenhouseLogger() {
+        
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(GreenhouseLogger.class);
 
     public static void debugLog(String message) {

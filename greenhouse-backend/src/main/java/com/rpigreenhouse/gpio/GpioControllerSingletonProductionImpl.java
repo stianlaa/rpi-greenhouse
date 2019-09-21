@@ -44,7 +44,7 @@ public class GpioControllerSingletonProductionImpl implements GpioControllerSing
     }
 
     @Override
-    public Boolean getPinState(InputPin pin) {
+    public boolean getPinState(InputPin pin) {
         Integer address = pin.addr();
         if (!provisionedInPins.containsKey(address)) {
             Pin pinToProvision = RaspiPin.getPinByAddress(address);

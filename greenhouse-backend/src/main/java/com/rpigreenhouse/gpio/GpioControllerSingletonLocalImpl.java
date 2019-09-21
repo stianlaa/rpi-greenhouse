@@ -21,9 +21,6 @@ public class GpioControllerSingletonLocalImpl implements GpioControllerSingleton
 
     private final Map<Integer, Boolean> provisionedPins = new HashMap<>();
 
-    public GpioControllerSingletonLocalImpl() {
-    }
-
     @PreDestroy
     public void destroy() {
         setAllPinsLow();
@@ -36,7 +33,7 @@ public class GpioControllerSingletonLocalImpl implements GpioControllerSingleton
     }
 
     @Override
-    public Boolean getPinState(InputPin pin) {
+    public boolean getPinState(InputPin pin) {
         return random.nextBoolean();
     }
 
