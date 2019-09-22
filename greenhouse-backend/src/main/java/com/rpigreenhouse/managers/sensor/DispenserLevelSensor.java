@@ -33,7 +33,7 @@ public class DispenserLevelSensor implements Sensor {
     @Override
     public void updateStateEstimate() {
         Optional<Double> result = singleMeasurement();
-        infoLog(format("Updating state estimate with new measurement: %s", result));
+//        infoLog(format("Updating state estimate with new measurement: %s", result));
         result.ifPresent(distance -> rangeMeasurements.add(distance));
         if (rangeMeasurements.size() > N) {
             rangeMeasurements.poll();
@@ -88,7 +88,7 @@ public class DispenserLevelSensor implements Sensor {
             float nanosCounted = (pulseEnd - pulseStart);
             Double secondsTravelled = (double) nanosCounted / 1000000000;
             double distance = secondsTravelled * SPEED_OF_SOUND / 2;
-            infoLog(format("Echo received, distance found to be: %s, seconds travelled was %s", distance, secondsTravelled));
+//            infoLog(format("Echo received, distance found to be: %s, seconds travelled was %s", distance, secondsTravelled));
             return Optional.of(distance);
         } else {
             if (!hasNotTimedOut(pulseStart)) {

@@ -83,7 +83,9 @@ public class WaterManager {
 
                 waterForTray = waterForTray + plantWaterNeed;
             }
-            trayWaterOrders.put(tray.getTrayId(), waterForTray);
+            if (waterForTray > 0) {
+                trayWaterOrders.put(tray.getTrayId(), waterForTray);
+            }
         }
 
         processWaterOrders();

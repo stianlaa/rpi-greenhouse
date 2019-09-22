@@ -8,8 +8,8 @@ import java.time.LocalDate;
 public class BasilPlant extends Plant {
     private static final String BASIL_NAME = "Basilplant";
     private static final Integer DAYS_TO_HARVEST = 75;
-    private static final Integer SEED_WATER_NEED = 5;
-    private static final Integer MATURE_WATER_NEED = 25;
+    private static final Integer SEED_WATER_NEED = 30;
+    private static final Integer MATURE_WATER_NEED = 50;
 
     public BasilPlant(int trayId) {
         super(trayId);

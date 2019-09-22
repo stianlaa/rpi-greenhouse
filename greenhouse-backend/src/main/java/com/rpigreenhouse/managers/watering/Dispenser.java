@@ -5,7 +5,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.rpigreenhouse.GreenhouseLogger.errorLog;
+import static com.rpigreenhouse.GreenhouseLogger.*;
+import static java.lang.String.format;
 
 @Component
 public class Dispenser {
@@ -48,18 +49,26 @@ public class Dispenser {
 
     private void fillToTargetVolume() throws InterruptedException {
         pumpRegulator.setPumpMode(true);
-        while (dispenserLevelSensor.getStateEstimate() < DISPENSER_TARGET_VOLUME) {
+        while (calculateVolumeFromSensorDistance(dispenserLevelSensor.getStateEstimate()) < DISPENSER_TARGET_VOLUME) {
             TimeUnit.MICROSECONDS.sleep(dispenserLevelSensor.getRefreshInterval());
+            infoLog(format("Current measured volume is: %s", calculateVolumeFromSensorDistance(dispenserLevelSensor.getStateEstimate())));
         }
         pumpRegulator.setPumpMode(false);
     }
 
     private void dispenseVolumeToTray(Integer trayId, Integer waterVolumeMl) throws InterruptedException {
+        Double waterVolumeLiter = (double) waterVolumeMl/1000;
+        infoLog(format("Attempting to dispense volume: %s to tray: %s", waterVolumeLiter, trayId));
+
         Double startingVolume = calculateVolumeFromSensorDistance(dispenserLevelSensor.getStateEstimate());
+
         valveRegulator.directValveToTray(trayId);
-        while (startingVolume - calculateVolumeFromSensorDistance(dispenserLevelSensor.getStateEstimate()) < waterVolumeMl) {
-            TimeUnit.MILLISECONDS.sleep(50L);
+
+        while (startingVolume - calculateVolumeFromSensorDistance(dispenserLevelSensor.getStateEstimate()) < waterVolumeLiter) {
+            TimeUnit.MICROSECONDS.sleep(dispenserLevelSensor.getRefreshInterval());
+            debugLog(format("Current volume is: %s, startvolume was %s, continuing to dispense", calculateVolumeFromSensorDistance(dispenserLevelSensor.getStateEstimate()), startingVolume));
         }
+        infoLog(format("Done dispensing: %s", calculateVolumeFromSensorDistance(dispenserLevelSensor.getStateEstimate())));
     }
 
     private Double calculateVolumeFromSensorDistance(Double distanceFromTop) {
