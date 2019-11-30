@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-import static com.rpigreenhouse.GreenhouseLogger.*;
+import static com.rpigreenhouse.GreenhouseLogger.debugLog;
+import static com.rpigreenhouse.GreenhouseLogger.warnLog;
 import static com.rpigreenhouse.gpio.InputPin.PIN_VOLUME_SENSOR_ECHO;
 import static com.rpigreenhouse.gpio.OutputPin.PIN_VOLUME_SENSOR_TRIG;
-import static java.lang.String.format;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
