@@ -1,30 +1,28 @@
-package com.rpigreenhouse.greenhouse;
+package com.rpigreenhouse;
 
 import com.rpigreenhouse.managers.sensor.SensorManager;
 import com.rpigreenhouse.managers.watering.WaterManager;
-import com.rpigreenhouse.plants.BasilPlant;
-import com.rpigreenhouse.plants.TomatoPlant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.rpigreenhouse.storage.plant.Plant;
+import com.rpigreenhouse.storage.plant.PlantType;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
 
-@Component
-public class Greenhouse {
+@Configuration
+public class GreenhouseConfig {
 
     private LocalDateTime firstWatering;
-    private Long wateringInterval;
 
+    private Long wateringInterval;
     private GreenhouseStorage greenhouseStorage;
     private WaterManager waterManager;
     private SensorManager sensorManager;
 
-    @Autowired
-    public void Greenhouse(GreenhouseStorage greenhouseStorage,
+    public GreenhouseConfig(GreenhouseStorage greenhouseStorage,
                            WaterManager waterManager,
                            SensorManager sensorManager,
                            @Value("${greenhouse.firstWateringHour}") Integer firstWateringHour,
@@ -38,17 +36,45 @@ public class Greenhouse {
 
         addStartupMockData();
 
-        if (firstWatering != null && wateringInterval != null)
+        if (firstWatering != null && wateringInterval != null) {
             waterManager.startWaterCheckingSchedule(firstWatering, wateringInterval);
+        }
         sensorManager.startSensorScedules();
     }
 
     private void addStartupMockData() {
-        greenhouseStorage.addPlant(new TomatoPlant(1).setIdealGrowthMonths(Month.APRIL, Month.AUGUST));
-        greenhouseStorage.addPlant(new TomatoPlant(1).setIdealGrowthMonths(Month.APRIL, Month.AUGUST));
-        greenhouseStorage.addPlant(new TomatoPlant(1).setIdealGrowthMonths(Month.APRIL, Month.AUGUST));
-        greenhouseStorage.addPlant(new BasilPlant(2).setIdealGrowthMonths(Month.MARCH, Month.SEPTEMBER));
-        greenhouseStorage.addPlant(new BasilPlant(2).setIdealGrowthMonths(Month.MARCH, Month.SEPTEMBER));
+        greenhouseStorage.addPlant(Plant.builder()
+                .trayId(1)
+                .plantType(PlantType.TOMATO_PLANT)
+                .expectedHarvestDate(LocalDate.now().plusDays(90))
+                .plantedDateTime(LocalDateTime.now())
+                .idealGrowthMonthsFrom(Month.APRIL)
+                .idealGrowthMonthsFrom(Month.AUGUST)
+                .seedWaterNeed(30)
+                .matureWaterNeed(60)
+                .build());
+
+        greenhouseStorage.addPlant(Plant.builder()
+                .trayId(2)
+                .plantType(PlantType.BASIL_PLANT)
+                .expectedHarvestDate(LocalDate.now().plusDays(90))
+                .plantedDateTime(LocalDateTime.now())
+                .idealGrowthMonthsFrom(Month.APRIL)
+                .idealGrowthMonthsFrom(Month.AUGUST)
+                .seedWaterNeed(30)
+                .matureWaterNeed(60)
+                .build());
+
+        greenhouseStorage.addPlant(Plant.builder()
+                .trayId(2)
+                .plantType(PlantType.BASIL_PLANT)
+                .expectedHarvestDate(LocalDate.now().plusDays(90))
+                .plantedDateTime(LocalDateTime.now())
+                .idealGrowthMonthsFrom(Month.APRIL)
+                .idealGrowthMonthsFrom(Month.AUGUST)
+                .seedWaterNeed(30)
+                .matureWaterNeed(60)
+                .build());
     }
 
     private LocalDateTime findNextWateringTime(Integer firstWateringHour, Integer firstWateringMinute) {

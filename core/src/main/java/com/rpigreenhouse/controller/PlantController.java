@@ -3,10 +3,9 @@ package com.rpigreenhouse.controller;
 import com.rpigreenhouse.exceptions.PlantNotFoundException;
 import com.rpigreenhouse.exceptions.TrayNotFoundException;
 import com.rpigreenhouse.greenhouse.Tray;
-import com.rpigreenhouse.plants.BasilPlant;
-import com.rpigreenhouse.plants.Plant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.rpigreenhouse.storage.plant.Plant;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -19,23 +18,17 @@ import static com.rpigreenhouse.GreenhouseLogger.debugLog;
 
 @RestController
 @RequestMapping("rest/greenhouse/")
+@RequiredArgsConstructor
 public class PlantController {
 
-    private GreenhouseStorage greenhouseStorage;
+    private final GreenhouseStorage greenhouseStorage;
 
-    @Autowired
-    public PlantController(GreenhouseStorage greenhouseStorage) {
-        this.greenhouseStorage = greenhouseStorage;
-    }
-
-    @CrossOrigin
     @GetMapping("getplants")
     public List<PlantTo> getPlants() {
         debugLog("received request for all plants");
         return greenhouseStorage.getPlants().stream().map(PlantTo::new).collect(Collectors.toList());
     }
 
-    @CrossOrigin
     @GetMapping("gettrayswithplants")
     public List<List<PlantTo>> getTraysWithPlants() {
         List<Plant> plantList = greenhouseStorage.getPlants();
@@ -51,7 +44,6 @@ public class PlantController {
         return traysWithPlants;
     }
 
-    @CrossOrigin
     @GetMapping("getplant/{plantid}")
     public PlantTo getPlantById(@PathVariable String plantid) {
         debugLog(String.format("received request for plant: %s", plantid));
@@ -60,14 +52,12 @@ public class PlantController {
                 .orElseThrow(PlantNotFoundException::new));
     }
 
-    @CrossOrigin
     @PostMapping("addplant")
-    public void addPlant() {
-        greenhouseStorage.addPlant(new BasilPlant(2)); // todo adapt to be able to create various plants
+    public void addPlant(@PathVariable Plant plant) {
         debugLog("received request to add new plant");
+        greenhouseStorage.addPlant(plant);
     }
 
-    @CrossOrigin
     @GetMapping(value = "getplantidsfortray/{trayid}")
     public List<String> getPlantIdsForTray(@PathVariable Integer trayid) {
         debugLog(String.format("received request for plantids for tray: %s", trayid));

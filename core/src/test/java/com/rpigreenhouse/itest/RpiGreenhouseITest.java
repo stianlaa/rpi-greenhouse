@@ -15,12 +15,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 //	public void contextLoads() {
 //	}
 //
-//	// todo 0. Implement local GPIO stub class, both for local running and testrunning
+//	// 0. Implement local GPIO stub class, both for local running and testrunning
 //
-//	// todo 1. Add new plant
+//	// 1. Add new plant
 //
-//	// todo 2. Get plant stored in database
+//	// 2. Get plant stored in database
 //
-//	// todo 3. Itest for receiving, mapping and storing weatherdata
+//	// 3. Itest for receiving, mapping and storing weatherdata
 //
 //}

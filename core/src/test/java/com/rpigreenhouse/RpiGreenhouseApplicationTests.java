@@ -15,5 +15,4 @@ import org.springframework.test.context.junit4.SpringRunner;
 //	public void contextLoads() {
 //	}
 //
-//	// todo Write unit mappertest for weatherdata
 //}

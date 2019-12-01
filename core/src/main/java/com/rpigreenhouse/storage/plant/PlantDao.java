@@ -1,6 +1,5 @@
 package com.rpigreenhouse.storage.plant;
 
-import com.rpigreenhouse.plants.Plant;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +11,7 @@ import java.time.Month;
 @Data
 @NoArgsConstructor
 @Entity(name = "PLANT_TABLE")
-public class PlantDAO {
+public class PlantDao {
 
     @Id
     @GeneratedValue
@@ -29,10 +28,10 @@ public class PlantDAO {
     private Integer seedWaterNeed;
     private Integer matureWaterNeed;
 
-    public PlantDAO(Plant plant) {
+    public PlantDao(Plant plant) {
         this.plantId = plant.getPlantId();
         this.trayId = plant.getTrayId();
-        this.plantType = plant.getPlantType();
+        this.plantType = plant.getPlantType().toString();
         this.plantedDateTime = plant.getPlantedDateTime();
         this.expectedHarvestDate = plant.getExpectedHarvestDate();
         this.idealGrowthMonthsFrom = plant.getIdealGrowthMonthsFrom();
@@ -45,7 +44,7 @@ public class PlantDAO {
         return Plant.builder()
                 .trayId(this.trayId)
                 .plantId(this.plantId)
-                .plantType(this.plantType)
+                .plantType(PlantType.valueOf(this.plantType))
                 .plantedDateTime(this.plantedDateTime)
                 .expectedHarvestDate(this.expectedHarvestDate)
                 .idealGrowthMonthsFrom(this.getIdealGrowthMonthsFrom())

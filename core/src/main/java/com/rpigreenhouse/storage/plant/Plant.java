@@ -1,4 +1,4 @@
-package com.rpigreenhouse.plants;
+package com.rpigreenhouse.storage.plant;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,15 +23,14 @@ public class Plant {
 
     protected int trayId;
 
-    protected String plantId;
-    protected String plantType;
-    protected LocalDateTime plantedDateTime;
-    protected LocalDate expectedHarvestDate;
-    protected Month idealGrowthMonthsFrom;
-    protected Month idealGrowthMonthsTo;
-
-    protected Integer seedWaterNeed;
-    protected Integer matureWaterNeed;
+    private String plantId;
+    private PlantType plantType;
+    private LocalDateTime plantedDateTime;
+    private LocalDate expectedHarvestDate;
+    private Month idealGrowthMonthsFrom;
+    private Month idealGrowthMonthsTo;
+    private Integer seedWaterNeed;
+    private Integer matureWaterNeed;
 
     public Plant(int trayId) {
         this.plantId = UUID.randomUUID().toString();

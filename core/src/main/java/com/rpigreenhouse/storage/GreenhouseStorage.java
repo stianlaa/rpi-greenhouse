@@ -1,19 +1,19 @@
 package com.rpigreenhouse.storage;
 
 import com.rpigreenhouse.greenhouse.Tray;
-import com.rpigreenhouse.plants.Plant;
+import com.rpigreenhouse.storage.plant.Plant;
 import com.rpigreenhouse.storage.plant.PlantService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Component
+@RequiredArgsConstructor
 public class GreenhouseStorage {
 
-    private PlantService plantService;
-
-    public GreenhouseStorage(PlantService plantService) {
-        this.plantService = plantService;
-    }
+    private final PlantService plantService;
 
     public List<Plant> getPlants() {
         return plantService.getAllPlants();

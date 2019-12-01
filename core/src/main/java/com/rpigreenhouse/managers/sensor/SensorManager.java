@@ -1,6 +1,6 @@
 package com.rpigreenhouse.managers.sensor;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -15,10 +15,10 @@ import static com.rpigreenhouse.GreenhouseLogger.infoLog;
 import static java.lang.String.format;
 
 @Component
+@RequiredArgsConstructor
 public class SensorManager {
 
-    @Autowired
-    private List<Sensor> sensors;
+    private final List<Sensor> sensors;
 
     private Map<String, ScheduledFuture<?>> sensorSchedules = new HashMap<>();
     private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();

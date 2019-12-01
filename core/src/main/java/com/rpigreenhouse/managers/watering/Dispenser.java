@@ -1,6 +1,7 @@
 package com.rpigreenhouse.managers.watering;
 
 import com.rpigreenhouse.managers.sensor.DispenserLevelSensor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
@@ -9,6 +10,7 @@ import static com.rpigreenhouse.GreenhouseLogger.*;
 import static java.lang.String.format;
 
 @Component
+@RequiredArgsConstructor
 public class Dispenser {
 
     private static final Double DISPENSER_TARGET_VOLUME = 1.0;
@@ -19,19 +21,9 @@ public class Dispenser {
     private static final Double MAX_VOLUME = 1.6;
     private static final Double MIN_VOLUME = 0.0;
 
-    private PumpRegulator pumpRegulator;
-    private ValveRegulator valveRegulator;
-    private DispenserLevelSensor dispenserLevelSensor;
-
-
-
-    public Dispenser(PumpRegulator pumpRegulator,
-                     ValveRegulator valveRegulator,
-                     DispenserLevelSensor dispenserLevelSensor) {
-        this.pumpRegulator = pumpRegulator;
-        this.valveRegulator = valveRegulator;
-        this.dispenserLevelSensor = dispenserLevelSensor;
-    }
+    private final PumpRegulator pumpRegulator;
+    private final ValveRegulator valveRegulator;
+    private final DispenserLevelSensor dispenserLevelSensor;
 
     public void giveTrayWater(Integer trayId, Integer waterVolumeMl) {
         try {

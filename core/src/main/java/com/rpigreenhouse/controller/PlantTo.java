@@ -1,6 +1,6 @@
 package com.rpigreenhouse.controller;
 
-import com.rpigreenhouse.plants.Plant;
+import com.rpigreenhouse.storage.plant.Plant;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -23,7 +23,7 @@ public class PlantTo {
     public PlantTo(Plant plant) {
         this.trayId = plant.getTrayId();
         this.plantId = plant.getPlantId();
-        this.plantType = plant.getPlantType();
+        this.plantType = plant.getPlantType().toString();
         this.plantedDateTime = plant.getPlantedDateTime();
         this.expectedHarvestDate = plant.getExpectedHarvestDate();
         this.idealGrowthMonths = plant.getIdealGrowthMonths();

@@ -1,4 +1,5 @@
-package com.rpigreenhouse.consumer;
+package com.rpigreenhouse.storage;
+
 
 import lombok.Builder;
 import lombok.Value;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Value
 @Builder
 @Entity(name = "WEATHERSTATUS_TABLE")
-public class WeatherStatus { // todo consider adding DAO layer
+public class WeatherStatusDao {
 
     @Id
     @GeneratedValue

@@ -2,6 +2,7 @@ package com.rpigreenhouse.managers.watering;
 
 import com.rpigreenhouse.gpio.GpioControllerSingleton;
 import com.rpigreenhouse.gpio.OutputPin;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -12,9 +13,11 @@ import static com.rpigreenhouse.gpio.OutputPin.*;
 import static java.lang.String.format;
 
 @Component
+@RequiredArgsConstructor
 public class ValveRegulator {
 
     private static Map<Integer, OutputPin> TRAY_PIN_MAP = new HashMap<>();
+
     static {
         TRAY_PIN_MAP.put(1, PIN_VALVE_A_1);
         TRAY_PIN_MAP.put(2, PIN_VALVE_A_2);
@@ -22,11 +25,7 @@ public class ValveRegulator {
         TRAY_PIN_MAP.put(4, PIN_VALVE_A_4);
     }
 
-    private GpioControllerSingleton gpioControllerSingleton;
-
-    public ValveRegulator(GpioControllerSingleton gpioControllerSingleton) {
-        this.gpioControllerSingleton = gpioControllerSingleton;
-    }
+    private final GpioControllerSingleton gpioControllerSingleton;
 
     public void directValveToTray(Integer trayId) {
         // close all other valve exits than that corresponding to trayId

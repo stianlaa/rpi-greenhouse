@@ -9,7 +9,7 @@ public enum OutputPin {
     PIN_VALVE_A_1(0), // physical pin: 11
     PIN_VALVE_A_2(2), // physical pin: 13
     PIN_VALVE_A_3(3), // physical pin: 15
-    PIN_VALVE_A_4(7), // todo physical pin: 7, probably have to change
+    PIN_VALVE_A_4(7), // physical pin: 7
     PIN_PUMP_1(4), // physical pin: 16
     PIN_PUMP_2(5); // physical pin: 18
 

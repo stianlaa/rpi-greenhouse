@@ -1,6 +1,6 @@
 package com.rpigreenhouse.greenhouse;
 
-import com.rpigreenhouse.plants.Plant;
+import com.rpigreenhouse.storage.plant.Plant;
 
 import java.util.List;
 

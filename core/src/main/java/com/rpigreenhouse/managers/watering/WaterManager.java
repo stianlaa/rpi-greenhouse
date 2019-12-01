@@ -1,9 +1,10 @@
 package com.rpigreenhouse.managers.watering;
 
 import com.rpigreenhouse.greenhouse.Tray;
-import com.rpigreenhouse.plants.Plant;
+import com.rpigreenhouse.storage.plant.Plant;
 import com.rpigreenhouse.storage.GreenhouseStorage;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -20,24 +21,18 @@ import static com.rpigreenhouse.GreenhouseLogger.debugLog;
 import static com.rpigreenhouse.GreenhouseLogger.warnLog;
 
 @Component
+@RequiredArgsConstructor
 public class WaterManager {
 
-    private Dispenser dispenser;
-    private GreenhouseStorage greenhouseStorage;
+    private final Dispenser dispenser;
+    private final GreenhouseStorage greenhouseStorage;
 
     private ScheduledFuture<?> wateringSchedule = null;
     private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-
     private Map<Integer, Integer> trayWaterOrders = new TreeMap<>();
 
     @Getter
-    private Boolean busyStatus = false;
-
-    public WaterManager(GreenhouseStorage greenhouseStorage,
-                        Dispenser dispenser) {
-        this.greenhouseStorage = greenhouseStorage;
-        this.dispenser = dispenser;
-    }
+    private Boolean isBusy = false;
 
     public void giveTrayWater(Integer trayId, Integer waterVolumeMl) {
         dispenser.giveTrayWater(trayId, waterVolumeMl);
@@ -73,7 +68,7 @@ public class WaterManager {
 
     private void waterAllPlants() {
         debugLog("Watering all plants");
-        busyStatus = true;
+        isBusy = true;
 
         for (Tray tray : greenhouseStorage.getTraysWithPlants()) {
             Integer waterForTray = 0;
@@ -89,7 +84,7 @@ public class WaterManager {
         }
 
         processWaterOrders();
-        busyStatus = false;
+        isBusy = false;
     }
 
     private void processWaterOrders() {
