@@ -1,4 +1,4 @@
 5. for local running, create input/output "mock" of gpio's
 
-A6. plan onwards, perhaps implement temperature adjusted watering
+6. plan onwards, perhaps implement temperature adjusted watering
 

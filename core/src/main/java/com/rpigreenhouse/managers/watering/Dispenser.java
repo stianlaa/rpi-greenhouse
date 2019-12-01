@@ -1,6 +1,6 @@
 package com.rpigreenhouse.managers.watering;
 
-import com.rpigreenhouse.managers.sensor.DispenserLevelSensor;
+import com.rpigreenhouse.managers.sensor.dispenserLevel.DispenserLevelSensor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

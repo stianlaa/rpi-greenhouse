@@ -1,7 +1,8 @@
-package com.rpigreenhouse.managers.sensor;
+package com.rpigreenhouse.managers.sensor.dispenserLevel;
 
 import com.rpigreenhouse.gpio.GpioControllerSingleton;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +14,9 @@ import static com.rpigreenhouse.gpio.InputPin.PIN_VOLUME_SENSOR_ECHO;
 import static com.rpigreenhouse.gpio.OutputPin.PIN_VOLUME_SENSOR_TRIG;
 
 @Component
+@Profile("prod")
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class DispenserLevelSensor implements Sensor {
+public class DispenserLevelSensorProd implements DispenserLevelSensor {
 
 
     private static final Long REFRESH_INTERVAL = 1000_000L; // Micros
@@ -26,7 +28,7 @@ public class DispenserLevelSensor implements Sensor {
     private GpioControllerSingleton gpioControllerSingleton;
     private Queue<Double> rangeMeasurements = new LinkedList<>();
 
-    public DispenserLevelSensor(GpioControllerSingleton gpioControllerSingleton) {
+    public DispenserLevelSensorProd(GpioControllerSingleton gpioControllerSingleton) {
         this.gpioControllerSingleton = gpioControllerSingleton;
     }
 
@@ -120,6 +122,7 @@ public class DispenserLevelSensor implements Sensor {
         }
     }
 
+    @Override
     public Long getRefreshInterval() {
         return REFRESH_INTERVAL;
     }

@@ -17,13 +17,13 @@ import static com.rpigreenhouse.GreenhouseLogger.infoLog;
 @Component
 @Profile("prod")
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class GpioControllerSingletonProductionImpl implements GpioControllerSingleton {
+public class GpioControllerSingletonProd implements GpioControllerSingleton {
 
     private final GpioController gpio;
     private final Map<Integer, GpioPinDigitalOutput> provisionedOutPins = new HashMap<>();
     private final Map<Integer, GpioPinDigitalInput> provisionedInPins = new HashMap<>();
 
-    public GpioControllerSingletonProductionImpl() {
+    public GpioControllerSingletonProd() {
         this.gpio = GpioFactory.getInstance();
     }
 

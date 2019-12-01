@@ -18,13 +18,13 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class SensorManager {
 
-    private final List<Sensor> sensors;
+    private final List<Sensor> sensorList;
 
     private Map<String, ScheduledFuture<?>> sensorSchedules = new HashMap<>();
     private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     public void startSensorScedules() {
-        for (Sensor sensor : sensors) {
+        for (Sensor sensor : sensorList) {
             String sensorName = sensor.getClass().getCanonicalName();
             sensorSchedules.put(sensorName, service.scheduleAtFixedRate(sensor::updateStateEstimate,
                     sensor.getRefreshInterval(),
