@@ -1,6 +1,6 @@
 package com.rpigreenhouse.managers.sensor.dispenserLevel;
 
-import com.rpigreenhouse.gpio.GpioControllerSingleton;
+import com.rpigreenhouse.gpio.GpioController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Profile;
@@ -18,7 +18,7 @@ public class DispenserLevelSensorLocal implements DispenserLevelSensor {
     private Random random = new Random();
     private static final Long REFRESH_INTERVAL = 1000_000L; // Micros
 
-    private final GpioControllerSingleton gpioControllerSingleton;
+    private final GpioController gpioController;
 
     @Override
     public void updateStateEstimate() {}

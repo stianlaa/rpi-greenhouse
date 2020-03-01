@@ -15,7 +15,7 @@ import static com.rpigreenhouse.GreenhouseLogger.infoLog;
 @Component
 @Profile("local")
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class GpioControllerSingletonLocal implements GpioControllerSingleton {
+public class GpioControllerLocal implements GpioController {
 
     private final Map<Integer, Boolean> provisionedPins = new HashMap<>();
     private final Map<Integer, Boolean> simulatedPins = new HashMap<>();
@@ -25,19 +25,19 @@ public class GpioControllerSingletonLocal implements GpioControllerSingleton {
         setAllPinsLow();
     }
 
-    public GpioControllerSingletonLocal() {
+    public GpioControllerLocal() {
         IntStream.range(0, 40).forEach(pinIndex -> simulatedPins.put(pinIndex, false));
     }
 
     @Override
     public void setPin(OutputPin pin, Boolean state) {
-        Integer address = pin.addr();
+        Integer address = pin.getPinAddress();
         provisionedPins.put(address, state);
     }
 
     @Override
     public boolean getPinState(InputPin pin) {
-        return simulatedPins.get(pin.addr());
+        return simulatedPins.get(pin.getPinAddress());
     }
 
     @Override

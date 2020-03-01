@@ -1,6 +1,6 @@
 package com.rpigreenhouse.managers.watering;
 
-import com.rpigreenhouse.gpio.GpioControllerSingleton;
+import com.rpigreenhouse.gpio.GpioController;
 import com.rpigreenhouse.gpio.OutputPin;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,9 +15,9 @@ import static com.rpigreenhouse.gpio.OutputPin.PIN_PUMP_2;
 @RequiredArgsConstructor
 public class PumpRegulator {
     private static final List<OutputPin> PUMP_PIN_ADDRESS_LIST = Arrays.asList(PIN_PUMP_1, PIN_PUMP_2);
-    private final GpioControllerSingleton gpioControllerSingleton;
+    private final GpioController gpioController;
 
     public void setPumpMode(Boolean pumpState) {
-        PUMP_PIN_ADDRESS_LIST.forEach(pin -> gpioControllerSingleton.setPin(pin, pumpState));
+        PUMP_PIN_ADDRESS_LIST.forEach(pin -> gpioController.setPin(pin, pumpState));
     }
 }

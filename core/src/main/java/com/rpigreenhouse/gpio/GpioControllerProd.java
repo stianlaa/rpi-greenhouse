@@ -17,13 +17,13 @@ import static com.rpigreenhouse.GreenhouseLogger.infoLog;
 @Component
 @Profile("prod")
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
-public class GpioControllerSingletonProd implements GpioControllerSingleton {
+public class GpioControllerProd implements GpioController {
 
-    private final GpioController gpio;
+    private final com.pi4j.io.gpio.GpioController gpio;
     private final Map<Integer, GpioPinDigitalOutput> provisionedOutPins = new HashMap<>();
     private final Map<Integer, GpioPinDigitalInput> provisionedInPins = new HashMap<>();
 
-    public GpioControllerSingletonProd() {
+    public GpioControllerProd() {
         this.gpio = GpioFactory.getInstance();
     }
 
@@ -34,7 +34,7 @@ public class GpioControllerSingletonProd implements GpioControllerSingleton {
 
     @Override
     public void setPin(OutputPin pin, Boolean state) {
-        Integer address = pin.addr();
+        Integer address = pin.getPinAddress();
         if (!provisionedOutPins.containsKey(address)) {
             Pin pinToProvision = RaspiPin.getPinByAddress(address);
             provisionDigitalOutputPin(pinToProvision);
@@ -46,7 +46,7 @@ public class GpioControllerSingletonProd implements GpioControllerSingleton {
 
     @Override
     public boolean getPinState(InputPin pin) {
-        Integer address = pin.addr();
+        Integer address = pin.getPinAddress();
         if (!provisionedInPins.containsKey(address)) {
             Pin pinToProvision = RaspiPin.getPinByAddress(address);
             provisionDigitalInputPin(pinToProvision);

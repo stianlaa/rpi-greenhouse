@@ -1,6 +1,7 @@
 package com.rpigreenhouse.managers.sensor.dispenserLevel;
 
-import com.rpigreenhouse.gpio.GpioControllerSingleton;
+import com.rpigreenhouse.gpio.GpioController;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
@@ -16,6 +17,7 @@ import static com.rpigreenhouse.gpio.OutputPin.PIN_VOLUME_SENSOR_TRIG;
 @Component
 @Profile("prod")
 @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+@RequiredArgsConstructor
 public class DispenserLevelSensorProd implements DispenserLevelSensor {
 
 
@@ -25,17 +27,12 @@ public class DispenserLevelSensorProd implements DispenserLevelSensor {
     private static final Double SPEED_OF_SOUND = 343.6;
     private static final Integer N = 10;
 
-    private GpioControllerSingleton gpioControllerSingleton;
+    private final GpioController gpioController;
     private Queue<Double> rangeMeasurements = new LinkedList<>();
-
-    public DispenserLevelSensorProd(GpioControllerSingleton gpioControllerSingleton) {
-        this.gpioControllerSingleton = gpioControllerSingleton;
-    }
 
     @Override
     public void updateStateEstimate() {
         Optional<Double> result = singleMeasurement();
-//        infoLog(format("Updating state estimate with new measurement: %s", result));
         result.ifPresent(distance -> rangeMeasurements.add(distance));
         if (rangeMeasurements.size() > N) {
             rangeMeasurements.poll();
@@ -44,7 +41,7 @@ public class DispenserLevelSensorProd implements DispenserLevelSensor {
 
     @Override
     public Double getStateEstimate() {
-        if (rangeMeasurements.isEmpty())  {
+        if (rangeMeasurements.isEmpty()) {
             warnLog("Couldn't return stateestimate, since measurement list was empty");
             return null;
         } else {
@@ -62,11 +59,11 @@ public class DispenserLevelSensorProd implements DispenserLevelSensor {
     }
 
     private void emit() {
-        gpioControllerSingleton.setPin(PIN_VOLUME_SENSOR_TRIG, false);
+        gpioController.setPin(PIN_VOLUME_SENSOR_TRIG, false);
         waitMicros(5L);
-        gpioControllerSingleton.setPin(PIN_VOLUME_SENSOR_TRIG, true);
+        gpioController.setPin(PIN_VOLUME_SENSOR_TRIG, true);
         waitMicros(10L);
-        gpioControllerSingleton.setPin(PIN_VOLUME_SENSOR_TRIG, false);
+        gpioController.setPin(PIN_VOLUME_SENSOR_TRIG, false);
     }
 
     private Optional<Double> listenToEcho() {
@@ -74,11 +71,11 @@ public class DispenserLevelSensorProd implements DispenserLevelSensor {
         Long pulseEnd = System.nanoTime();
         emit();
 
-        while (!gpioControllerSingleton.getPinState(PIN_VOLUME_SENSOR_ECHO) && hasNotTimedOut(pulseStart)) {
+        while (!gpioController.getPinState(PIN_VOLUME_SENSOR_ECHO) && hasNotTimedOut(pulseStart)) {
             pulseStart = System.nanoTime();
         }
 
-        while (gpioControllerSingleton.getPinState(PIN_VOLUME_SENSOR_ECHO) && hasNotTimedOut(pulseStart)) {
+        while (gpioController.getPinState(PIN_VOLUME_SENSOR_ECHO) && hasNotTimedOut(pulseStart)) {
             pulseEnd = System.nanoTime();
         }
 
@@ -90,7 +87,6 @@ public class DispenserLevelSensorProd implements DispenserLevelSensor {
             float nanosCounted = (pulseEnd - pulseStart);
             Double secondsTravelled = (double) nanosCounted / 1000000000;
             double distance = secondsTravelled * SPEED_OF_SOUND / 2;
-//            infoLog(format("Echo received, distance found to be: %s, seconds travelled was %s", distance, secondsTravelled));
             return Optional.of(distance);
         } else {
             if (!hasNotTimedOut(pulseStart)) {

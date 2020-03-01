@@ -1,4 +1,0 @@
-5. for local running, create input/output "mock" of gpio's
-
-6. plan onwards, perhaps implement temperature adjusted watering
-

@@ -1,14 +1,12 @@
 package com.rpigreenhouse;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
+@NoArgsConstructor( access = AccessLevel.PRIVATE)
 public class GreenhouseLogger {
-
-    private GreenhouseLogger() {
-        
-    }
 
     private static final Logger logger = LoggerFactory.getLogger(GreenhouseLogger.class);
 

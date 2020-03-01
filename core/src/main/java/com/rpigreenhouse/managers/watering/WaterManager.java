@@ -1,12 +1,13 @@
 package com.rpigreenhouse.managers.watering;
 
-import com.rpigreenhouse.greenhouse.Tray;
-import com.rpigreenhouse.storage.plant.Plant;
-import com.rpigreenhouse.storage.GreenhouseStorage;
-import lombok.Getter;
+import com.rpigreenhouse.dto.Plant;
+import com.rpigreenhouse.dto.Tray;
+import com.rpigreenhouse.exceptions.technical.WaterManagerBusyException;
+import com.rpigreenhouse.service.PlantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -25,24 +26,27 @@ import static com.rpigreenhouse.GreenhouseLogger.warnLog;
 public class WaterManager {
 
     private final Dispenser dispenser;
-    private final GreenhouseStorage greenhouseStorage;
+    private final PlantService plantService;
 
     private ScheduledFuture<?> wateringSchedule = null;
     private ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
     private Map<Integer, Integer> trayWaterOrders = new TreeMap<>();
 
-    @Getter
     private Boolean isBusy = false;
 
     public void giveTrayWater(Integer trayId, Integer waterVolumeMl) {
-        dispenser.giveTrayWater(trayId, waterVolumeMl);
+        if (isBusy) {
+            throw new WaterManagerBusyException();
+        } else {
+            dispenser.giveTrayWater(trayId, waterVolumeMl);
+        }
     }
 
-    public Long startWaterCheckingSchedule(LocalDateTime firstWatering, Long wateringInterval) {
+    public Long startWaterCheckingSchedule(LocalDateTime nextWatering) {
         if (wateringSchedule == null) {
             wateringSchedule = service.scheduleAtFixedRate(this::waterAllPlants,
-                    findSecondsToFirstWatering(firstWatering),
-                    wateringInterval,
+                    findSecondsToFirstWatering(nextWatering),
+                    Duration.ofDays(1).toMillis(),
                     TimeUnit.SECONDS);
         }
         debugLog("The watering schedule was already started");
@@ -70,7 +74,7 @@ public class WaterManager {
         debugLog("Watering all plants");
         isBusy = true;
 
-        for (Tray tray : greenhouseStorage.getTraysWithPlants()) {
+        for (Tray tray : plantService.getAllTrays()) {
             Integer waterForTray = 0;
             for (Plant plant : tray.getPlants()) {
                 Integer plantWaterNeed = calculatePlantWaterNeed(plant, LocalDate.now());

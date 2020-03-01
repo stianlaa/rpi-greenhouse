@@ -1,6 +1,6 @@
 package com.rpigreenhouse.gpio;
 
-public interface GpioControllerSingleton {
+public interface GpioController {
     public void setPin(OutputPin pin, Boolean state);
 
     public void setAllPinsLow();
